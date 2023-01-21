@@ -1,7 +1,7 @@
 import express from "express";
 import auth from "./auth";
 import socketManager from "./server-socket";
-import {getRooms} from "./lobbies";
+import lobbyManager from "./lobbies";
 const router = express.Router();
 
 router.post("/login", auth.login);
@@ -29,9 +29,27 @@ router.post("/initsocket", (req, res) => {
 
 router.get("/lobbies", (req, res) => {
   if (req.user){
-    res.send(getRooms());
+    res.send(lobbyManager.getRooms());
+  } else {
+    res.send("no user :(");
   }
-  res.send({});
+});
+
+router.post("/create-lobby", (req, res) => {
+  if (req.user){
+    const roomCode = lobbyManager.createRoom(req.user);
+    res.send({code: roomCode});
+  } else {
+    res.send("no user :(");
+  }
+});
+
+router.post("/join-lobby", (req, res) => {
+  if(req.user){
+    lobbyManager.joinRoom(req.user, req.body.roomCode);
+  } else {
+    res.send("no user :(");
+  }
 });
 
 // anything else falls to this "not found" case
