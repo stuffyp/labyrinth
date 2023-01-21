@@ -1,6 +1,7 @@
 import express from "express";
 import auth from "./auth";
 import socketManager from "./server-socket";
+import {getRooms} from "./lobbies";
 const router = express.Router();
 
 router.post("/login", auth.login);
@@ -24,6 +25,14 @@ router.post("/initsocket", (req, res) => {
 // |------------------------------|
 // | write your API methods below!|
 // |------------------------------|
+
+
+router.get("/lobbies", (req, res) => {
+  if (req.user){
+    res.send(getRooms());
+  }
+  res.send({});
+});
 
 // anything else falls to this "not found" case
 router.all("*", (req, res) => {
