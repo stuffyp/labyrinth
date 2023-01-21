@@ -5,7 +5,7 @@ import UserInterface from "../shared/User";
 
 // create a new OAuth client used to verify google sign-in
 //    TODO: replace with your own CLIENT_ID
-const CLIENT_ID = "FILL ME IN";
+const CLIENT_ID = "488291385403-8ociqks8epjcr7dlmb4t3447an4u148p.apps.googleusercontent.com";
 const client = new OAuth2Client(CLIENT_ID);
 
 const verify = (token: string) => {
