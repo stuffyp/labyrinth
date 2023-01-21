@@ -47,6 +47,17 @@ router.post("/create-lobby", (req, res) => {
 router.post("/join-lobby", (req, res) => {
   if(req.user){
     lobbyManager.joinRoom(req.user, req.body.roomCode);
+    res.send({});
+  } else {
+    res.send("no user :(");
+  }
+});
+
+router.post("/disconnect-lobby", (req, res) => {
+  if(req.user){
+    lobbyManager.disconnectUser(req.user);
+    lobbyManager.cleanUpRooms();
+    res.send({});
   } else {
     res.send("no user :(");
   }
