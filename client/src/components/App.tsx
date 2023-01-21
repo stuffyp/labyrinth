@@ -9,6 +9,8 @@ import Skeleton from "./pages/Skeleton";
 import { socket } from "../client-socket";
 import User from "../../../shared/User";
 import "../utilities.css";
+import NavBar from "./modules/NavBar";
+import Game from "./pages/Game";
 
 const App = () => {
   const [userId, setUserId] = useState<string | undefined>(undefined);
@@ -46,10 +48,16 @@ const App = () => {
   // NOTE:
   // All the pages need to have the props extended via RouteComponentProps for @reach/router to work properly. Please use the Skeleton as an example.
   return (
-    <Router>
-      <Skeleton path="/" handleLogin={handleLogin} handleLogout={handleLogout} userId={userId} />
-      <NotFound default={true} />
-    </Router>
+    <>
+      <NavBar />
+      <div>
+        <Router>
+          <Skeleton path="/" handleLogin={handleLogin} handleLogout={handleLogout} userId={userId} />
+          <Game path="/game/"/>
+          <NotFound default={true} />
+        </Router>
+      </div>
+    </>
   );
 };
 
