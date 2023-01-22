@@ -11,6 +11,7 @@ import User from "../../../shared/User";
 import "../utilities.css";
 import NavBar from "./modules/NavBar";
 import Game from "./pages/Game";
+import APITester from "./debugging/APITester";
 
 const App = () => {
   const [userId, setUserId] = useState<string | undefined>(undefined);
@@ -57,6 +58,8 @@ const App = () => {
           <NotFound default={true} />
         </Router>
       </div>
+      {/*uncomment for testing*/}
+      {<APITester/>}
     </>
   );
 };
