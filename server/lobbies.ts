@@ -4,7 +4,6 @@ import {randString} from "./random";
 import socketManager from "./server-socket";
 import gameLogic from "./game-logic";
 import { Server } from "socket.io";
-const assert = require("assert");
 
 const ROOM_CODE_LENGTH = 5;
 let io: Server;
@@ -23,11 +22,11 @@ const getRooms = () => {
 }
 
 const createRoom = (host: User) => {
-    assert(!isCurrentlyActive(host));
+    if (isCurrentlyActive(host)) throw new Error(`${host._id} is already in a lobby.`);
     let roomCode = randString(ROOM_CODE_LENGTH);
 
     const userSocket = socketManager.getSocketFromUserID(host._id);
-    if (!userSocket) throw new Error(`Socket id ${host._id} does not exist.`);
+    if (!userSocket) throw new Error(`Socket id of ${host._id} does not exist.`);
 
     userSocket?.join(roomCode);
     return roomCode;
@@ -37,8 +36,8 @@ const createRoom = (host: User) => {
 
 //TODO: check that room code is valid
 const joinRoom = (user: User, roomCode: string) => {
-    assert(!isCurrentlyActive(user));
-    assert(roomCodeExists(roomCode));
+    if (isCurrentlyActive(user)) throw new Error(`${user._id} is already in a lobby.`);
+    if(!roomCodeExists(roomCode)) throw new Error(`$Room code ${roomCode} does not exist.`);
     
     const userSocket = socketManager.getSocketFromUserID(user._id);
     userSocket?.join(roomCode);
@@ -46,7 +45,7 @@ const joinRoom = (user: User, roomCode: string) => {
 
 const isCurrentlyActive = (user: User) : boolean => {
     const userSocket = socketManager.getSocketFromUserID(user._id);
-    if (!userSocket) throw new Error(`Socket id ${user._id} does not exist.`);
+    if (!userSocket) throw new Error(`Socket id of ${user._id} does not exist.`);
 
     const roomsConnected = userSocket.rooms.size;
     if (roomsConnected) return roomsConnected > 1;
@@ -63,7 +62,7 @@ const roomCodeExists = (roomCode: string) : boolean => {
 
 const kickUser = (user: User) => {
     const userSocket = socketManager.getSocketFromUserID(user._id);
-    if (!userSocket) throw new Error(`Socket id ${user._id} does not exist.`);
+    if (!userSocket) throw new Error(`Socket id of ${user._id} does not exist.`);
 
     for (const room of userSocket.rooms){
         userSocket.leave(room);
