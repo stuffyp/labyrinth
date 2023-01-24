@@ -35,13 +35,14 @@ const createRoom = (host: User) => {
 };
 
 
-//TODO: check that room code is valid
 const joinRoom = (user: User, roomCode: string) => {
     if (isCurrentlyActive(user)) throw new Error(`${user._id} is already in a lobby.`);
     if(!roomCodeExists(roomCode)) throw new Error(`Room code ${roomCode} does not exist.`);
     
     const userSocket = socketManager.getSocketFromUserID(user._id);
     userSocket?.join(roomCode);
+
+    io.to(roomCode).emit("updateRoom");
 }
 
 const isCurrentlyActive = (user: User) : boolean => {

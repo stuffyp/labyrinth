@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import Lobby from "./Lobby";
 import { get } from "../../utilities";
+import { socket } from "../../client-socket";
 
 type LobbyProps = {
   roomCode?: string;
@@ -16,6 +17,12 @@ const LobbyWrapper = (props: LobbyProps) => {
       setUsers(response.users);
     });
   }, []);
+
+  socket.on("updateRoom", () => {
+    get("/api/lobby", { roomCode: roomCode }).then((response) => {
+      setUsers(response.users);
+    });
+  });
 
   return (
     <>
