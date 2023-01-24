@@ -13,9 +13,7 @@ import lobbies from "./lobbies";
 dotenv.config({});
 
 // Server configuration below
-// TODO change connection URL after setting up your team database and creating the .env file
 const mongoConnectionURL = process.env.MONGO_SRV;
-// TODO change database name to the name you chose
 const databaseName = process.env.DATABASE_NAME;
 
 if (mongoConnectionURL === undefined) {
