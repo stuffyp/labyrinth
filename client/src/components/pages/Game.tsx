@@ -5,7 +5,7 @@ type GameComponentProps = {};
 const Game = (props: GameComponentProps) => {
   return (
     <div>
-      <h1>The page you are looking for is in another castle!</h1>
+      <h1>There's gonna be a game here it's gonna be sick i promise</h1>
     </div>
   );
 };

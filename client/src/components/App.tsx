@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Redirect, Router } from "@reach/router";
 import { Routes, Route } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import { CredentialResponse } from "@react-oauth/google";
@@ -54,15 +53,28 @@ const App = () => {
   const gamePage = <Game />;
   const lobbyPage = <Lobby />;
   const notFound = <NotFound />;
+
+  const loggedInRoutes = (
+    <>
+      <Route path="/" element={homePage} />
+      <Route path="/game/" element={gamePage} />
+      <Route path="/lobby/:roomCode" element={lobbyPage} />
+      <Route path="*" element={notFound} />
+    </>
+  );
+  const loggedOutRoutes = (
+    <>
+      <Route path="/" element={homePage} />
+      <Route path="*" element={notFound} />
+    </>
+  );
   return (
     <>
       <NavBar />
       <div>
         <Routes>
-          <Route path="/" element={homePage} />
-          <Route path="/game/" element={gamePage} />
-          <Route path="/lobby/:roomCode" element={lobbyPage} />
-          <Route path="*" element={notFound} />
+          {userId && loggedInRoutes}
+          {!userId && loggedOutRoutes}
         </Routes>
       </div>
       {/*uncomment for testing*/}
