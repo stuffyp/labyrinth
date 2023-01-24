@@ -8,6 +8,7 @@ import path from "path"; // Allows us to retrieve file paths
 import auth from "./auth"; // weblab authentication helper
 import socketManager from "./server-socket"; // websockets
 import api from "./api";
+import lobbies from "./lobbies";
 // Loads environmental variables
 dotenv.config({});
 
@@ -78,6 +79,7 @@ app.use((err: any, _req: Request, res: Response) => {
 const port = process.env.PORT || 3000;
 const server = http.createServer(app);
 socketManager.init(server);
+lobbies.init();
 server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

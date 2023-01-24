@@ -11,7 +11,7 @@ const NavBar = (props) => {
         Game
       </Link>
     </div>
-  )
-}
+  );
+};
 
-export default NavBar
+export default NavBar;

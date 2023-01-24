@@ -5,12 +5,13 @@ import { CredentialResponse } from "@react-oauth/google";
 
 import { get, post } from "../utilities";
 import NotFound from "./pages/NotFound";
-import Skeleton from "./pages/Skeleton";
+import Home from "./pages/Home";
 import { socket } from "../client-socket";
 import User from "../../../shared/User";
 import "../utilities.css";
 import NavBar from "./modules/NavBar";
 import Game from "./pages/Game";
+import Lobby from "./pages/Lobby";
 import APITester from "./debugging/APITester";
 
 const App = () => {
@@ -53,13 +54,14 @@ const App = () => {
       <NavBar />
       <div>
         <Router>
-          <Skeleton path="/" handleLogin={handleLogin} handleLogout={handleLogout} userId={userId} />
-          <Game path="/game/"/>
+          <Home path="/" handleLogin={handleLogin} handleLogout={handleLogout} userId={userId} />
+          <Game path="/game/" />
+          <Lobby path="/lobby/:roomCode" />
           <NotFound default={true} />
         </Router>
       </div>
       {/*uncomment for testing*/}
-      {<APITester/>}
+      {/*<APITester />*/}
     </>
   );
 };
