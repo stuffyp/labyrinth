@@ -3,33 +3,43 @@ import { useParams } from "react-router-dom";
 import Lobby from "./Lobby";
 import { get } from "../../utilities";
 import { socket } from "../../client-socket";
+import NotFound from "./NotFound";
 
 type LobbyProps = {
   roomCode?: string;
 };
 
 const LobbyWrapper = (props: LobbyProps) => {
+  const [roomExists, setRoomExists] = useState(false);
   const { roomCode } = useParams();
 
   const [users, setUsers] = useState(new Array<string>());
-  useEffect(() => {
+  const updateRoom = () => {
     get("/api/lobby", { roomCode: roomCode }).then((response) => {
+      setRoomExists(response.roomExists);
       setUsers(response.users);
     });
-  }, []);
+  };
 
+  useEffect(() => {
+    updateRoom();
+  }, []);
   socket.on("updateRoom", () => {
-    get("/api/lobby", { roomCode: roomCode }).then((response) => {
-      setUsers(response.users);
-    });
+    updateRoom();
   });
 
   return (
     <>
-      <Lobby roomCode={roomCode} />
-      {users.map((user) => (
-        <div>{user}</div>
-      ))}
+      {roomExists ? (
+        <>
+          <Lobby roomCode={roomCode} />
+          {users.map((user) => (
+            <div>{user}</div>
+          ))}
+        </>
+      ) : (
+        <NotFound />
+      )}
     </>
   );
 };

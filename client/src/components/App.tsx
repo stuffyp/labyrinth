@@ -23,13 +23,14 @@ const App = () => {
         if (user._id) {
           // TRhey are registed in the database and currently logged in.
           setUserId(user._id);
+          post("/api/initsocket", { socketid: socket.id });
         }
       })
-      .then(() =>
+      .then(() => {
         socket.on("connect", () => {
           post("/api/initsocket", { socketid: socket.id });
-        })
-      );
+        });
+      });
   }, []);
 
   const handleLogin = (credentialResponse: CredentialResponse) => {

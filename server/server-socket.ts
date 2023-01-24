@@ -19,6 +19,7 @@ export const addUser = (user: User, socket: Socket): void => {
     socketToUserMap.delete(oldSocket.id);
   }
   userToSocketMap.set(user._id, socket);
+  console.log(`user ${user._id} has been mapped to ${socket.id}`);
   socketToUserMap.set(socket.id, user);
 };
 

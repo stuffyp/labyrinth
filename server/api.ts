@@ -76,7 +76,17 @@ router.get("/lobby", (req, res) => {
   const roomCode = req.query.roomCode as string;
   if(req.user){
     lobbyManager.getRoom(req.user, roomCode).then((users) => {
-      res.send({users: users});
+      if(users){
+        res.send({
+          users: users, 
+          roomExists: true
+        });
+      } else {
+        res.send({
+          users: [],
+          roomExists: false
+        });
+      }
     });
   } else {
     res.send("no user :(");

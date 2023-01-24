@@ -71,11 +71,17 @@ const kickUser = (user: User) => {
     }
 }
 
-const getRoom = async (user: User, roomCode: string) : Promise<string[]> => {
+const getRoom = async (user: User, roomCode: string) : Promise<string[]|null> => {
     const userSocket = socketManager.getSocketFromUserID(user._id);
+    /*
     if (!userSocket) throw new Error(`Socket id of ${user._id} does not exist.`);
     if (!roomCodeExists(roomCode)) throw new Error(`Room code ${roomCode} does not exist.`);
     if (!userSocket.rooms.has(roomCode)) throw new Error(`Socket id of ${user._id} has not joined room ${roomCode}`);
+    */
+
+    if (!userSocket) throw new Error(`Socket id of ${user._id} does not exist.`);
+    if (!roomCodeExists(roomCode)) return null;
+    if (!userSocket.rooms.has(roomCode)) return null;
 
     const users : Array<string> = [];
     const sockets = await io.in(roomCode).fetchSockets()
