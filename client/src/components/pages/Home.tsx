@@ -7,13 +7,12 @@ import {
 } from "@react-oauth/google";
 
 import "./Home.css";
-import { RouteComponentProps } from "@reach/router";
 
 import { CreateLobbyButton, JoinLobbyButton } from "../modules/MenuButton";
 
 const GOOGLE_CLIENT_ID = "488291385403-8ociqks8epjcr7dlmb4t3447an4u148p.apps.googleusercontent.com";
 
-type Props = RouteComponentProps & {
+type Props = {
   userId?: string;
   handleLogin: (credentialResponse: CredentialResponse) => void;
   handleLogout: () => void;

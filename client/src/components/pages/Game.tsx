@@ -1,8 +1,6 @@
 import React from "react";
 
-import { RouteComponentProps } from "@reach/router";
-
-type GameComponentProps = RouteComponentProps;
+type GameComponentProps = {};
 
 const Game = (props: GameComponentProps) => {
   return (
