@@ -11,6 +11,7 @@ import User from "../../../shared/User";
 import "../utilities.css";
 import NavBar from "./modules/NavBar";
 import Game from "./pages/Game";
+import Lobby from "./pages/Lobby";
 import APITester from "./debugging/APITester";
 
 const App = () => {
@@ -54,12 +55,13 @@ const App = () => {
       <div>
         <Router>
           <Home path="/" handleLogin={handleLogin} handleLogout={handleLogout} userId={userId} />
-          <Game path="/game/"/>
+          <Game path="/game/" />
+          <Lobby path="/lobby/:roomCode" />
           <NotFound default={true} />
         </Router>
       </div>
       {/*uncomment for testing*/}
-      {<APITester/>}
+      {/*<APITester />*/}
     </>
   );
 };

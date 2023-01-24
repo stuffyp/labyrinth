@@ -65,7 +65,7 @@ router.post("/create-lobby", (req, res) => {
 router.post("/join-lobby", (req, res) => {
   if(req.user){
     lobbyManager.joinRoom(req.user, req.body.roomCode);
-    res.send({});
+    res.send({code: req.body.roomCode});
   } else {
     res.send("no user :(");
   }

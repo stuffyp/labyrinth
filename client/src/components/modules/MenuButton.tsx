@@ -1,15 +1,24 @@
 import { get, post } from "../../utilities";
 import React, { useState } from "react";
+import { navigate } from "@reach/router";
 
 const CreateLobbyButton = (props) => {
+  const [roomCode, setRoomCode] = useState("");
+
   return (
-    <button
-      onClick={() => {
-        post("api/create-lobby");
-      }}
-    >
-      Create Lobby
-    </button>
+    <div>
+      <button
+        onClick={() => {
+          post("api/create-lobby").then((response) => {
+            setRoomCode(response.code);
+            navigate(`/lobby/${response.code}`);
+          });
+        }}
+      >
+        Create Lobby
+      </button>
+      <p>Room Code: {roomCode}</p>
+    </div>
   );
 };
 
@@ -24,7 +33,10 @@ const JoinLobbyButton = (props) => {
       <input type="text" placeholder="" value={roomCode} onChange={handleValueChange} />
       <button
         onClick={() => {
-          post("api/join-lobby", { roomCode: roomCode });
+          post("api/join-lobby", { roomCode: roomCode }).then((response) => {
+            setRoomCode(response.code);
+            navigate(`/lobby/${response.code}`);
+          });
         }}
       >
         Join Lobby

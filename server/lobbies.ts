@@ -32,6 +32,8 @@ const createRoom = (host: User) => {
 
 };
 
+
+//TODO: check that room code is valid
 const joinRoom = (user: User, roomCode: string) => {
     assert(!isCurrentlyActive(user));
     
