@@ -38,6 +38,7 @@ const createRoom = (host: User) => {
 //TODO: check that room code is valid
 const joinRoom = (user: User, roomCode: string) => {
     assert(!isCurrentlyActive(user));
+    assert(roomCodeExists(roomCode));
     
     const userSocket = socketManager.getSocketFromUserID(user._id);
     userSocket?.join(roomCode);
@@ -49,6 +50,14 @@ const isCurrentlyActive = (user: User) : boolean => {
 
     const roomsConnected = userSocket.rooms.size;
     if (roomsConnected) return roomsConnected > 1;
+    return false;
+}
+
+const roomCodeExists = (roomCode: string) : boolean => {
+    if (roomCode.length!==5) return false;
+    for (const room of getRooms().keys()) {
+        if (room===roomCode) return true;
+    }
     return false;
 }
 
