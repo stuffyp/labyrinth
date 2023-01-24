@@ -4,6 +4,7 @@ import {randString} from "./random";
 import socketManager from "./server-socket";
 import gameLogic from "./game-logic";
 import { Server } from "socket.io";
+import { Socket } from "socket.io-client";
 
 const ROOM_CODE_LENGTH = 5;
 let io: Server;
@@ -34,13 +35,14 @@ const createRoom = (host: User) => {
 };
 
 
-//TODO: check that room code is valid
 const joinRoom = (user: User, roomCode: string) => {
     if (isCurrentlyActive(user)) throw new Error(`${user._id} is already in a lobby.`);
-    if(!roomCodeExists(roomCode)) throw new Error(`$Room code ${roomCode} does not exist.`);
+    if(!roomCodeExists(roomCode)) throw new Error(`Room code ${roomCode} does not exist.`);
     
     const userSocket = socketManager.getSocketFromUserID(user._id);
     userSocket?.join(roomCode);
+
+    io.to(roomCode).emit("updateRoom");
 }
 
 const isCurrentlyActive = (user: User) : boolean => {
@@ -53,7 +55,7 @@ const isCurrentlyActive = (user: User) : boolean => {
 }
 
 const roomCodeExists = (roomCode: string) : boolean => {
-    if (roomCode.length!==5) return false;
+    if (roomCode.length!==ROOM_CODE_LENGTH) return false;
     for (const room of getRooms().keys()) {
         if (room===roomCode) return true;
     }
@@ -69,10 +71,37 @@ const kickUser = (user: User) => {
     }
 }
 
+const getRoom = async (user: User, roomCode: string) : Promise<string[]|null> => {
+    const userSocket = socketManager.getSocketFromUserID(user._id);
+    /*
+    if (!userSocket) throw new Error(`Socket id of ${user._id} does not exist.`);
+    if (!roomCodeExists(roomCode)) throw new Error(`Room code ${roomCode} does not exist.`);
+    if (!userSocket.rooms.has(roomCode)) throw new Error(`Socket id of ${user._id} has not joined room ${roomCode}`);
+    */
+
+    if (!userSocket) throw new Error(`Socket id of ${user._id} does not exist.`);
+    if (!roomCodeExists(roomCode)) return null;
+    if (!userSocket.rooms.has(roomCode)) return null;
+
+    const users : Array<string> = [];
+    const sockets = await io.in(roomCode).fetchSockets()
+    for (const socket of sockets){
+        const name = socketManager.getUserFromSocketID(socket.id)?.name;
+        if (name) {
+            users.push(name) 
+        } else {
+            users.push("Anonymous")
+        };
+    }
+        
+    return users;
+}
+
 export default {
     init,
     getRooms,
     createRoom,
     joinRoom,
     kickUser,
+    getRoom,
 };

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Redirect, Router } from "@reach/router";
 import { Routes, Route } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import { CredentialResponse } from "@react-oauth/google";
@@ -12,7 +11,7 @@ import User from "../../../shared/User";
 import "../utilities.css";
 import NavBar from "./modules/NavBar";
 import Game from "./pages/Game";
-import Lobby from "./pages/Lobby";
+import LobbyWrapper from "./pages/LobbyWrapper";
 import APITester from "./debugging/APITester";
 
 const App = () => {
@@ -24,13 +23,14 @@ const App = () => {
         if (user._id) {
           // TRhey are registed in the database and currently logged in.
           setUserId(user._id);
+          post("/api/initsocket", { socketid: socket.id });
         }
       })
-      .then(() =>
+      .then(() => {
         socket.on("connect", () => {
           post("/api/initsocket", { socketid: socket.id });
-        })
-      );
+        });
+      });
   }, []);
 
   const handleLogin = (credentialResponse: CredentialResponse) => {
@@ -52,17 +52,30 @@ const App = () => {
   // All the pages need to have the props extended via RouteComponentProps for @reach/router to work properly. Please use the Skeleton as an example.
   const homePage = <Home handleLogin={handleLogin} handleLogout={handleLogout} userId={userId} />;
   const gamePage = <Game />;
-  const lobbyPage = <Lobby />;
+  const lobbyPage = <LobbyWrapper />;
   const notFound = <NotFound />;
+
+  const loggedInRoutes = (
+    <>
+      <Route path="/" element={homePage} />
+      <Route path="/game/" element={gamePage} />
+      <Route path="/lobby/:roomCode" element={lobbyPage} />
+      <Route path="*" element={notFound} />
+    </>
+  );
+  const loggedOutRoutes = (
+    <>
+      <Route path="/" element={homePage} />
+      <Route path="*" element={notFound} />
+    </>
+  );
   return (
     <>
       <NavBar />
       <div>
         <Routes>
-          <Route path="/" element={homePage} />
-          <Route path="/game/" element={gamePage} />
-          <Route path="/lobby/:roomCode" element={lobbyPage} />
-          <Route path="*" element={notFound} />
+          {userId && loggedInRoutes}
+          {!userId && loggedOutRoutes}
         </Routes>
       </div>
       {/*uncomment for testing*/}
