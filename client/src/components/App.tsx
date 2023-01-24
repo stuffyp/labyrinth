@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Router } from "@reach/router";
+import { Redirect, Router } from "@reach/router";
+import { Routes, Route } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import { CredentialResponse } from "@react-oauth/google";
 
@@ -49,16 +50,20 @@ const App = () => {
 
   // NOTE:
   // All the pages need to have the props extended via RouteComponentProps for @reach/router to work properly. Please use the Skeleton as an example.
+  const homePage = <Home handleLogin={handleLogin} handleLogout={handleLogout} userId={userId} />;
+  const gamePage = <Game />;
+  const lobbyPage = <Lobby />;
+  const notFound = <NotFound />;
   return (
     <>
       <NavBar />
       <div>
-        <Router>
-          <Home path="/" handleLogin={handleLogin} handleLogout={handleLogout} userId={userId} />
-          <Game path="/game/" />
-          <Lobby path="/lobby/:roomCode" />
-          <NotFound default={true} />
-        </Router>
+        <Routes>
+          <Route path="/" element={homePage} />
+          <Route path="/game/" element={gamePage} />
+          <Route path="/lobby/:roomCode" element={lobbyPage} />
+          <Route path="*" element={notFound} />
+        </Routes>
       </div>
       {/*uncomment for testing*/}
       {/*<APITester />*/}

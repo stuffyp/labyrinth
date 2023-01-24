@@ -1,9 +1,10 @@
 import { get, post } from "../../utilities";
 import React, { useState } from "react";
-import { navigate } from "@reach/router";
+import { useNavigate } from "react-router-dom";
 
 const CreateLobbyButton = (props) => {
   const [roomCode, setRoomCode] = useState("");
+  const navigate = useNavigate();
 
   return (
     <div>
@@ -24,6 +25,7 @@ const CreateLobbyButton = (props) => {
 
 const JoinLobbyButton = (props) => {
   const [roomCode, setRoomCode] = useState("");
+  const navigate = useNavigate();
 
   const handleValueChange = (event) => {
     setRoomCode(event.target.value);
