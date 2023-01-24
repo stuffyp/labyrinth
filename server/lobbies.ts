@@ -27,6 +27,8 @@ const createRoom = (host: User) => {
     let roomCode = randString(ROOM_CODE_LENGTH);
 
     const userSocket = socketManager.getSocketFromUserID(host._id);
+    if (!userSocket) throw new Error(`Socket id ${host._id} does not exist.`);
+
     userSocket?.join(roomCode);
     return roomCode;
 
@@ -50,9 +52,19 @@ const isCurrentlyActive = (user: User) : boolean => {
     return false;
 }
 
+const kickUser = (user: User) => {
+    const userSocket = socketManager.getSocketFromUserID(user._id);
+    if (!userSocket) throw new Error(`Socket id ${user._id} does not exist.`);
+
+    for (const room of userSocket.rooms){
+        userSocket.leave(room);
+    }
+}
+
 export default {
     init,
     getRooms,
     createRoom,
     joinRoom,
+    kickUser,
 };
