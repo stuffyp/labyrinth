@@ -11,7 +11,7 @@ import User from "../../../shared/User";
 import "../utilities.css";
 import NavBar from "./modules/NavBar";
 import Game from "./pages/Game";
-import Lobby from "./pages/Lobby";
+import LobbyWrapper from "./pages/LobbyWrapper";
 import APITester from "./debugging/APITester";
 
 const App = () => {
@@ -51,7 +51,7 @@ const App = () => {
   // All the pages need to have the props extended via RouteComponentProps for @reach/router to work properly. Please use the Skeleton as an example.
   const homePage = <Home handleLogin={handleLogin} handleLogout={handleLogout} userId={userId} />;
   const gamePage = <Game />;
-  const lobbyPage = <Lobby />;
+  const lobbyPage = <LobbyWrapper />;
   const notFound = <NotFound />;
 
   const loggedInRoutes = (

@@ -71,6 +71,18 @@ router.post("/join-lobby", (req, res) => {
   }
 });
 
+//TODO: validate input
+router.get("/lobby", (req, res) => {
+  const roomCode = req.query.roomCode as string;
+  if(req.user){
+    lobbyManager.getRoom(req.user, roomCode).then((users) => {
+      res.send({users: users});
+    });
+  } else {
+    res.send("no user :(");
+  }
+});
+
 // anything else falls to this "not found" case
 router.all("*", (req, res) => {
   const msg = `Api route not found: ${req.method} ${req.url}`;
