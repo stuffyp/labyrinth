@@ -53,7 +53,7 @@ const isCurrentlyActive = (user: User) : boolean => {
 }
 
 const roomCodeExists = (roomCode: string) : boolean => {
-    if (roomCode.length!==5) return false;
+    if (roomCode.length!==ROOM_CODE_LENGTH) return false;
     for (const room of getRooms().keys()) {
         if (room===roomCode) return true;
     }
