@@ -13,8 +13,8 @@ const Lobby = (props: LobbyProps) => {
     <div>
       <h1>Welcome to the Lobby!</h1>
       <p>Room Code: {roomCode}</p>
-      {props.users.map((user) => (
-        <div>{user}</div>
+      {props.users.map((user, idx) => (
+        <div key={idx}>{user}</div>
       ))}
     </div>
   );
