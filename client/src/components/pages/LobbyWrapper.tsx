@@ -4,6 +4,7 @@ import Lobby from "./Lobby";
 import { get } from "../../utilities";
 import { socket } from "../../client-socket";
 import NotFound from "./NotFound";
+import GameCanvas from "../modules/GameCanvas";
 
 type LobbyProps = {
   roomCode?: string;
@@ -32,10 +33,8 @@ const LobbyWrapper = (props: LobbyProps) => {
     <>
       {roomExists ? (
         <>
-          <Lobby roomCode={roomCode} />
-          {users.map((user) => (
-            <div>{user}</div>
-          ))}
+          <Lobby roomCode={roomCode} users={users} />
+          <GameCanvas width="500px" height="500px" />
         </>
       ) : (
         <NotFound />
