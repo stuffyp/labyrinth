@@ -26,12 +26,30 @@ router.post("/initsocket", (req, res) => {
 // | write your API methods below!|
 // |------------------------------|
 
-
+//TODO: really scuffed, change later, SHOULD NOT BE USED FOR NON-DEBUG PURPOSES
 router.get("/lobbies", (req, res) => {
   if (req.user){
-    res.send(lobbyManager.getRooms());
+    const rooms = lobbyManager.getRooms();
+    let ans = {};
+    const keys = [...rooms.keys()];
+    for (let k of keys){
+      let arr : Array<string> = []
+      for (let v of rooms.get(k)!){
+        arr.push(v);
+      }
+      ans[k] = arr;
+    }
+    res.send(ans);
   } else {
     res.send("no user :(");
+  }
+});
+
+//TODO: get rid of SHOULD NOT BE USED FOR NON-DEBUG PURPOSES
+router.get("/what-is-my-socket-id", (req, res) => {
+  if (req.user) {
+    const userSocket = socketManager.getSocketFromUserID(req.user._id);
+    res.send({id: userSocket?.id});
   }
 });
 
@@ -47,16 +65,6 @@ router.post("/create-lobby", (req, res) => {
 router.post("/join-lobby", (req, res) => {
   if(req.user){
     lobbyManager.joinRoom(req.user, req.body.roomCode);
-    res.send({});
-  } else {
-    res.send("no user :(");
-  }
-});
-
-router.post("/disconnect-lobby", (req, res) => {
-  if(req.user){
-    lobbyManager.disconnectUser(req.user);
-    lobbyManager.cleanUpRooms();
     res.send({});
   } else {
     res.send("no user :(");

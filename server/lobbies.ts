@@ -1,91 +1,56 @@
 import { isAssertClause } from "typescript";
 import User from "../shared/User";
-import { randString } from "./random";
+import {randString} from "./random";
+import socketManager from "./server-socket";
+import gameLogic from "./game-logic";
+import { Server } from "socket.io";
 const assert = require("assert");
-require("./random");
 
 const ROOM_CODE_LENGTH = 5;
+let io: Server;
 
-interface Room {
-    host_id: string|undefined;
-    code: string;
-    other_player_ids: Array<string>;
-};
-
-const roomList : Array<Room> = [];
-
-const getRooms = () => {
-    return roomList;
+const init = () => {
+    io = socketManager.getIo();
 }
 
-const userCurrentlyQueued = (user: User) => {
-    roomList.forEach((room) => {
-        if(room.host_id===user._id || room.other_player_ids.indexOf(user._id)>-1){
-            return true;
-        }
-    });
-    return false;
+const sendGameState = (roomCode: string) => {
+    const gameState = gameLogic.getGameState(roomCode);
+    io.to(roomCode).emit("update", gameState);
+}
+
+const getRooms = () => {
+    return io.sockets.adapter.rooms;
 }
 
 const createRoom = (host: User) => {
-    //TODO: uncomment this when no longer testing!
-    //assert(!userCurrentlyQueued(host));
-
+    assert(!isCurrentlyActive(host));
     let roomCode = randString(ROOM_CODE_LENGTH);
-    while(roomList.filter((room)=>(room.code===roomCode)).length>0){
-        roomCode = randString(ROOM_CODE_LENGTH);
-    }
 
-    const newRoom : Room = {
-        host_id: host._id,
-        code: roomCode,
-        other_player_ids: [],
-    };
-    roomList.push(newRoom);
-
+    const userSocket = socketManager.getSocketFromUserID(host._id);
+    userSocket?.join(roomCode);
     return roomCode;
 
 };
 
 const joinRoom = (user: User, roomCode: string) => {
-    //TODO: uncomment this when no longer testing!
-    //assert(!userCurrentlyQueued(user));
-
-    let room : Room|undefined = undefined;
-    for(let i = 0; i<roomList.length; i++){
-        if(roomList[i].code===roomCode){
-            room = roomList[i];
-            break;
-        }
-    }
-
-    assert(room!==undefined);
-
-    room?.other_player_ids.push(user._id);
+    assert(!isCurrentlyActive(user));
+    
+    const userSocket = socketManager.getSocketFromUserID(user._id);
+    userSocket?.join(roomCode);
 }
 
-const disconnectUser = (user: User) => {
-    roomList.forEach((room) => {
-        if(room.host_id===user._id){
-            room.host_id = undefined;
-        }
-        room.other_player_ids = room.other_player_ids.filter((id) => (id!==user._id));
-    });
-}
+const isCurrentlyActive = (user: User) : boolean => {
+    const userSocket = socketManager.getSocketFromUserID(user._id);
+    if (!userSocket) throw new Error(`Socket id ${user._id} does not exist.`);
 
-//goes from back to front to avoid bugs from modifying array as you loop
-const cleanUpRooms = () => {
-    for(let i = roomList.length-1; i>=0; i--){
-        if(roomList[i].host_id===undefined){
-            roomList.splice(i, 1);
-        }
-    }
+    const roomsConnected = userSocket.rooms.size;
+    if (roomsConnected) return roomsConnected > 1;
+    return false;
 }
 
 export default {
+    init,
     getRooms,
     createRoom,
     joinRoom,
-    disconnectUser,
-    cleanUpRooms,
 };
