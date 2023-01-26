@@ -16,4 +16,4 @@ const randString = (length: number) => {
     return str;
 }
 
-export {randString};
+export {randInt, randString};

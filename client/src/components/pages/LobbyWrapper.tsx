@@ -6,6 +6,8 @@ import { socket } from "../../client-socket";
 import NotFound from "./NotFound";
 import AlternateRoute from "../debugging/AlternateRoute";
 import GameCanvas from "../modules/GameCanvas";
+import { StartGameButton } from "../modules/MenuButton";
+import APITester from "../debugging/APITester";
 
 type LobbyProps = {
   roomCode?: string;
@@ -18,11 +20,16 @@ const LobbyWrapper = (props: LobbyProps) => {
   const [loading, setLoading] = useState(true);
 
   const [users, setUsers] = useState(new Array<string>());
+  const [hostIndex, setHostIndex] = useState(-1);
+  const [isHost, setIsHost] = useState(false);
+
   const updateRoom = () => {
     get("/api/lobby", { roomCode: roomCode })
       .then((response) => {
         setRoomExists(response.roomExists);
-        setUsers(response.users);
+        setUsers(response.userData.users);
+        setHostIndex(response.userData.hostIndex);
+        setIsHost(response.userData.isHost);
       })
       .then(() => {
         setLoading(false);
@@ -43,12 +50,15 @@ const LobbyWrapper = (props: LobbyProps) => {
     <>
       {roomExists ? (
         <>
-          <Lobby roomCode={roomCode} users={users} />
-          <GameCanvas/>
+          <Lobby roomCode={roomCode} users={users} hostIndex={hostIndex} />
+          {isHost && <StartGameButton roomCode={roomCode as string} />}
+          <br />
+          <GameCanvas />
         </>
       ) : (
         <>{!loading && <NotFound />}</>
       )}
+      {/*<APITester />*/}
     </>
   );
 };

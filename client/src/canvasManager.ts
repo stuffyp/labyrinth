@@ -1,7 +1,8 @@
+import { Position, Player, Enemy, GameState } from "../../server/models/GameTypes";
 let canvas;
 
 /** utils */
-
+/*
 type StateData = {
   food: Food[];
   players: Player[];
@@ -22,7 +23,7 @@ type Player = {
   position: Position;
   radius: number;
   color: string;
-}
+}*/
 
 type Coord = {
   drawX: number;
@@ -45,14 +46,11 @@ Object.keys(sprites).forEach((key) => {
 });*/
 
 // converts a coordinate in a normal X Y plane to canvas coordinates
-const convertCoord: (x: number, y: number) => Coord = function (
-    x: number,
-    y: number
-):Coord {
+const convertCoord = (position: Position) : Coord => {
   //if (!canvas) return;
   return {
-    drawX: x,
-    drawY: canvas.height - y,
+    drawX: position.x,
+    drawY: canvas.height - position.y,
   };
 };
 
@@ -79,19 +77,19 @@ const fillCircle = (context, x, y, radius, color) => {
 
 /** drawing functions */
 
-const drawPlayer = (context, x, y, radius, color) => {
-  const { drawX, drawY } = convertCoord(x, y);
+const drawPlayer = (context, position, radius, color) => {
+  const { drawX, drawY } = convertCoord(position);
   //drawSprite(context, drawX, drawY, radius, color);
   fillCircle(context, drawX, drawY, radius, color);
 };
 
-const drawCircle = (context, x, y, radius, color) => {
-  const { drawX, drawY } = convertCoord(x, y);
+const drawCircle = (context, position, radius, color) => {
+  const { drawX, drawY } = convertCoord(position);
   fillCircle(context, drawX, drawY, radius, color);
 };
 
 /** main draw */
-export const drawCanvas = (drawState: StateData) => {
+export const drawCanvas = (drawState: GameState) => {
   // use id of canvas element in HTML DOM to get reference to canvas object
   canvas = document.getElementById("game-canvas");
   if (!canvas) return;
@@ -103,11 +101,7 @@ export const drawCanvas = (drawState: StateData) => {
 
   // draw all the players
   Object.values(drawState.players).forEach((p: Player) => {
-    drawPlayer(context, p.position.x, p.position.y, p.radius, p.color);
+    drawPlayer(context, p.position, p.radius, p.color);
   });
 
-  // draw all the foods
-  Object.values(drawState.food).forEach((f: Food) => {
-    drawCircle(context, f.position.x, f.position.y, f.radius, f.color);
-  });
 };

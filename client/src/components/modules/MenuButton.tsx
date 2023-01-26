@@ -49,4 +49,19 @@ const JoinLobbyButton = (props) => {
   );
 };
 
-export { CreateLobbyButton, JoinLobbyButton };
+type StartGameProps = {
+  roomCode: string;
+};
+const StartGameButton = (props: StartGameProps) => {
+  return (
+    <button
+      onClick={() => {
+        post("/api/start-game", { roomCode: props.roomCode });
+      }}
+    >
+      Start Game
+    </button>
+  );
+};
+
+export { CreateLobbyButton, JoinLobbyButton, StartGameButton };

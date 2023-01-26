@@ -75,7 +75,7 @@ const App = () => {
   );
   return (
     <>
-      <NavBar />
+      {/*<NavBar />*/}
       <div>
         <Routes>
           {!loading && userId && loggedInRoutes}
