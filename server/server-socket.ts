@@ -32,6 +32,11 @@ export const init = (server: http.Server): void => {
   io = new Server(server);
   io.on("connection", (socket) => {
     console.log(`socket has connected ${socket.id}`);
+    socket.on("disconnecting", () => {
+      for (const room of socket.rooms) {
+        socket.to(room).emit("updateRoom");
+      }
+    });
     socket.on("disconnect", () => {
       console.log(`socket has disconnected ${socket.id}`);
       const user = getUserFromSocketID(socket.id);
