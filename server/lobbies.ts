@@ -1,12 +1,13 @@
 import { isAssertClause } from "typescript";
 import User from "../shared/User";
 import {randString} from "./random";
-import socketManager, { getSocketFromSocketID } from "./server-socket";
-import gameLogic from "./game-logic";
+import socketManager, { getSocketFromSocketID, getUserFromSocketID } from "./server-socket";
+import {setupGame, updateGameState, getGameState} from "./game-logic";
 import { Server } from "socket.io";
 import { Socket } from "socket.io-client";
 
 const ROOM_CODE_LENGTH = 5;
+const FPS = 60;
 let io: Server;
 const roomToHostMap = new Map<string, string>();//room name, user id
 
@@ -14,9 +15,22 @@ const init = () => {
     io = socketManager.getIo();
 }
 
+const startGame = async (roomCode: string) => {
+    const sockets = await io.in(roomCode).fetchSockets();
+    const users = sockets.map((socket) => getUserFromSocketID(socket.id));
+    setupGame(roomCode, users.filter(user => user) as User[]);
+    const clearID = setInterval(() => {
+        if(!getRooms().has(roomCode)){
+            clearInterval(clearID);
+        }
+        updateGameState(roomCode);
+        sendGameState(roomCode);
+    }, 1000/FPS);
+}
+
 const sendGameState = (roomCode: string) => {
-    const gameState = gameLogic.getGameState(roomCode);
-    io.to(roomCode).emit("update", gameState);
+    const gameState = getGameState(roomCode);
+    io.to(roomCode).emit("updateGame", gameState);
 }
 
 const getRooms = () => {
@@ -32,6 +46,8 @@ const createRoom = (host: User) => {
 
     userSocket?.join(roomCode);
     roomToHostMap.set(roomCode, host._id);
+
+    startGame(roomCode);
     return roomCode;
 
 };
