@@ -12,6 +12,7 @@ const CreateLobbyButton = (props) => {
         onClick={() => {
           post("api/create-lobby").then((response) => {
             setRoomCode(response.code);
+            sessionStorage["last-room-joined"] = response.code;
             navigate(`/lobby/${response.code}`);
           });
         }}
@@ -37,6 +38,7 @@ const JoinLobbyButton = (props) => {
         onClick={() => {
           post("api/join-lobby", { roomCode: roomCode }).then((response) => {
             setRoomCode(response.code);
+            sessionStorage["last-room-joined"] = response.code;
             navigate(`/lobby/${response.code}`);
           });
         }}

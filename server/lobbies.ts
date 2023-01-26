@@ -37,7 +37,7 @@ const createRoom = (host: User) => {
 
 const joinRoom = (user: User, roomCode: string) => {
     if (isCurrentlyActive(user)) throw new Error(`${user._id} is already in a lobby.`);
-    if(!roomCodeExists(roomCode)) throw new Error(`Room code ${roomCode} does not exist.`);
+    if(!roomCodeValid(roomCode)) throw new Error(`Room code ${roomCode} does not exist.`);
     
     const userSocket = socketManager.getSocketFromUserID(user._id);
     userSocket?.join(roomCode);
@@ -54,12 +54,8 @@ const isCurrentlyActive = (user: User) : boolean => {
     return false;
 }
 
-const roomCodeExists = (roomCode: string) : boolean => {
-    if (roomCode.length!==ROOM_CODE_LENGTH) return false;
-    for (const room of getRooms().keys()) {
-        if (room===roomCode) return true;
-    }
-    return false;
+const roomCodeValid = (roomCode: string) : boolean => {
+    return roomCode.length===ROOM_CODE_LENGTH && roomCode.toUpperCase()===roomCode;
 }
 
 const kickUser = (user: User) => {
@@ -79,8 +75,10 @@ const getRoom = async (user: User, roomCode: string) : Promise<string[]|null> =>
     if (!userSocket.rooms.has(roomCode)) throw new Error(`Socket id of ${user._id} has not joined room ${roomCode}`);
     */
 
-    if (!userSocket) throw new Error(`Socket id of ${user._id} does not exist.`);
-    if (!roomCodeExists(roomCode)) return null;
+    if (!userSocket) return null;
+    if (!roomCodeValid(roomCode)) return null;
+
+    //if (!isCurrentlyActive(user)) joinRoom(user, roomCode);
     if (!userSocket.rooms.has(roomCode)) return null;
 
     const users : Array<string> = [];
