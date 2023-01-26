@@ -16,6 +16,7 @@ import APITester from "./debugging/APITester";
 
 const App = () => {
   const [userId, setUserId] = useState<string | undefined>(undefined);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     get("/api/whoami")
@@ -30,6 +31,9 @@ const App = () => {
         socket.on("connect", () => {
           post("/api/initsocket", { socketid: socket.id });
         });
+      })
+      .then(() => {
+        setLoading(false);
       });
   }, []);
 
@@ -74,8 +78,8 @@ const App = () => {
       <NavBar />
       <div>
         <Routes>
-          {userId && loggedInRoutes}
-          {!userId && loggedOutRoutes}
+          {!loading && userId && loggedInRoutes}
+          {!loading && !userId && loggedOutRoutes}
         </Routes>
       </div>
       {/*uncomment for testing*/}
