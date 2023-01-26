@@ -44,7 +44,7 @@ const LobbyWrapper = (props: LobbyProps) => {
       {roomExists ? (
         <>
           <Lobby roomCode={roomCode} users={users} />
-          <GameCanvas width="500px" height="500px" />
+          <GameCanvas/>
         </>
       ) : (
         <>{!loading && <NotFound />}</>
