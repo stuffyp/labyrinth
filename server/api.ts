@@ -62,6 +62,25 @@ router.post("/create-lobby", (req, res) => {
   }
 });
 
+router.post("/hi", (req, res) => {
+  res.send({});
+})
+
+router.post("/start-game", (req, res) => {
+  const roomCode = req.body.roomCode;
+  if(typeof roomCode!=="string"){
+    res.send("no room code :(");
+    return;
+  }
+  if(!req.user){
+    res.send("no user :(");
+    return;
+  }
+  lobbyManager.startGame(req.user, roomCode).then(() =>
+    {res.send({});}
+  );
+});
+
 router.post("/join-lobby", (req, res) => {
   if(req.user){
     lobbyManager.joinRoom(req.user, req.body.roomCode);
@@ -73,7 +92,11 @@ router.post("/join-lobby", (req, res) => {
 
 //TODO: validate input
 router.get("/lobby", (req, res) => {
-  const roomCode = req.query.roomCode as string;
+  const roomCode = req.query.roomCode;
+  if(typeof roomCode!=="string"){
+    res.send("no room code :(");
+    return;
+  }
   if(req.user){
     lobbyManager.getRoom(req.user, roomCode).then((userData) => {
       if(userData){

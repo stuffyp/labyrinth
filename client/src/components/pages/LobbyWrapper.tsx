@@ -6,6 +6,8 @@ import { socket } from "../../client-socket";
 import NotFound from "./NotFound";
 import AlternateRoute from "../debugging/AlternateRoute";
 import GameCanvas from "../modules/GameCanvas";
+import { StartGameButton } from "../modules/MenuButton";
+import APITester from "../debugging/APITester";
 
 type LobbyProps = {
   roomCode?: string;
@@ -49,13 +51,14 @@ const LobbyWrapper = (props: LobbyProps) => {
       {roomExists ? (
         <>
           <Lobby roomCode={roomCode} users={users} hostIndex={hostIndex} />
-          {isHost && <button>Start Game</button>}
+          {isHost && <StartGameButton roomCode={roomCode as string} />}
           <br />
           <GameCanvas />
         </>
       ) : (
         <>{!loading && <NotFound />}</>
       )}
+      {/*<APITester />*/}
     </>
   );
 };

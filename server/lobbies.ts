@@ -15,7 +15,10 @@ const init = () => {
     io = socketManager.getIo();
 }
 
-const startGame = async (roomCode: string) => {
+const startGame = async (user: User, roomCode: string) => {
+    if(roomToHostMap.get(roomCode)!==user._id){
+        return;
+    }
     const sockets = await io.in(roomCode).fetchSockets();
     const users = sockets.map((socket) => getUserFromSocketID(socket.id));
     setupGame(roomCode, users.filter(user => user) as User[]);
@@ -47,7 +50,6 @@ const createRoom = (host: User) => {
     userSocket?.join(roomCode);
     roomToHostMap.set(roomCode, host._id);
 
-    startGame(roomCode);
     return roomCode;
 
 };
@@ -138,4 +140,5 @@ export default {
     joinRoom,
     kickUser,
     getRoom,
+    startGame,
 };

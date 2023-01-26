@@ -13,7 +13,7 @@ const setupGame = (roomCode: string, users: User[]) => {
         newGameState.players.push({
             user: user, 
             position : {x: randInt(0, CANVAS_WIDTH), y: randInt(0, CANVAS_HEIGHT)}, 
-            radius: 5, 
+            radius: 10, 
             color: "red"
         });
     }
