@@ -75,10 +75,10 @@ router.post("/join-lobby", (req, res) => {
 router.get("/lobby", (req, res) => {
   const roomCode = req.query.roomCode as string;
   if(req.user){
-    lobbyManager.getRoom(req.user, roomCode).then((users) => {
-      if(users){
+    lobbyManager.getRoom(req.user, roomCode).then((userData) => {
+      if(userData){
         res.send({
-          users: users, 
+          userData: userData, 
           roomExists: true
         });
       } else {

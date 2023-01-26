@@ -18,11 +18,16 @@ const LobbyWrapper = (props: LobbyProps) => {
   const [loading, setLoading] = useState(true);
 
   const [users, setUsers] = useState(new Array<string>());
+  const [hostIndex, setHostIndex] = useState(-1);
+  const [isHost, setIsHost] = useState(false);
+
   const updateRoom = () => {
     get("/api/lobby", { roomCode: roomCode })
       .then((response) => {
         setRoomExists(response.roomExists);
-        setUsers(response.users);
+        setUsers(response.userData.users);
+        setHostIndex(response.userData.hostIndex);
+        setIsHost(response.userData.isHost);
       })
       .then(() => {
         setLoading(false);
@@ -43,7 +48,9 @@ const LobbyWrapper = (props: LobbyProps) => {
     <>
       {roomExists ? (
         <>
-          <Lobby roomCode={roomCode} users={users} />
+          <Lobby roomCode={roomCode} users={users} hostIndex={hostIndex} />
+          {isHost && <button>Start Game</button>}
+          <br />
           <GameCanvas width="500px" height="500px" />
         </>
       ) : (
