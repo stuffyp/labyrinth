@@ -9,6 +9,8 @@ socket.on("updateGame", (gameState) => {
     drawCanvas(gameState);
 });
 
-export const move = (roomCode : string, dir : Vector) => {
+const move = (roomCode : string, dir : Vector) => {
   socket.emit("move", {roomCode: roomCode, dir: dir});
 };
+
+export {move};

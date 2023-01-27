@@ -146,4 +146,5 @@ export default {
     kickUser,
     getRoom,
     startGame,
+    isCurrentlyActive,
 };

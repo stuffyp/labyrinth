@@ -37,9 +37,9 @@ const LobbyWrapper = (props: LobbyProps) => {
   };
 
   useEffect(() => {
-    if (sessionStorage["last-room-joined"]) {
-      post("/api/join-lobby", { roomCode: sessionStorage["last-room-joined"] });
-    }
+    const lastJoined = sessionStorage["last-room-joined"];
+    if (lastJoined && typeof lastJoined === "string")
+      post("/api/rejoin-lobby", { roomCode: lastJoined });
     updateRoom();
   }, []);
   socket.on("updateRoom", () => {
@@ -53,7 +53,7 @@ const LobbyWrapper = (props: LobbyProps) => {
           <Lobby roomCode={roomCode} users={users} hostIndex={hostIndex} />
           {isHost && <StartGameButton roomCode={roomCode as string} />}
           <br />
-          <GameCanvas roomCode = {roomCode}/>
+          <GameCanvas roomCode={roomCode} />
         </>
       ) : (
         <>{!loading && <NotFound />}</>
