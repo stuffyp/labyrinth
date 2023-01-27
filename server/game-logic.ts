@@ -8,14 +8,13 @@ const CANVAS_HEIGHT = 500;
 const gameStateMap : Map<string, GameState> = new Map<string, GameState>();
 
 const setupGame = (roomCode: string, users: User[]) => {
-    const newGameState : GameState = {players: [], enemies: []};
+    const newGameState : GameState = {players: {}, enemies: []};
     for (const user of users){
-        newGameState.players.push({
-            user: user, 
+        newGameState.players[user._id] = {
             position : {x: randInt(0, CANVAS_WIDTH), y: randInt(0, CANVAS_HEIGHT)}, 
             radius: 10, 
             color: "red"
-        });
+        };
     }
     gameStateMap.set(roomCode, newGameState);
 }

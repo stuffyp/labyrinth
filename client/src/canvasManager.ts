@@ -100,8 +100,12 @@ export const drawCanvas = (drawState: GameState) => {
   context.fillRect(0, 0, canvas.width, canvas.height);
 
   // draw all the players
-  Object.values(drawState.players).forEach((p: Player) => {
+  for (const key in drawState.players){
+    const player = drawState.players[key];
+    drawPlayer(context, player.position, player.radius, player.color);
+  }
+  /*Object.values(drawState.players).forEach((p: Player) => {
     drawPlayer(context, p.position, p.radius, p.color);
-  });
+  });*/
 
 };
