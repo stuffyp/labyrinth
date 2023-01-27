@@ -1,4 +1,4 @@
-import {Hitbox} from "./models/GameTypes";
+import {Hitbox} from "../shared/GameTypes";
 
 const collides = (h1 : Hitbox, h2: Hitbox) : boolean => {
     const dx = h1.position.x-h2.position.x;

@@ -25,19 +25,4 @@ type GameState  = {
     enemies: Enemy[],
 }
 
-const magnitude = (v : Vector) : number => {
-    return Math.sqrt(v.x*v.x+v.y*v.y);
-}
-
-const normalize = (v : Vector) : Vector => {
-    const length = magnitude(v);
-    if (length) return {
-        x: v.x/length,
-        y: v.y/length
-    };
-    return v;
-}
-
-export {magnitude, normalize};
-
-export {Position, Player, Enemy, GameState, Hitbox};
+export {Vector, Position, Player, Enemy, GameState, Hitbox};

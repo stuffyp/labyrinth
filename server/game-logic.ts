@@ -1,5 +1,5 @@
 import { User } from "./models/User";
-import {Position, Player, Enemy, GameState} from "./models/GameTypes";
+import {Position, Player, Enemy, GameState} from "../shared/GameTypes";
 import { randInt } from "./random";
 import { collides} from "./game-util";
 

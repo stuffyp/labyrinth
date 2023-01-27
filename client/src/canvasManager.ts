@@ -1,4 +1,4 @@
-import { Position, Player, Enemy, GameState } from "../../server/models/GameTypes";
+import { Position, Player, Enemy, GameState } from "../../shared/GameTypes";
 let canvas;
 
 /** utils */
