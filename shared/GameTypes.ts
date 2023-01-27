@@ -1,10 +1,11 @@
-import { getPositionOfLineAndCharacter } from "typescript";
-import { User } from "./User";
+import { User } from "../server/models/User";
 
-type Position  = {
-    x : number,
-    y: number,
+type Vector = {
+    x: number,
+    y : number,
 }
+
+type Position  = Vector
 
 type Player = Hitbox & {
     color: string,
@@ -24,4 +25,4 @@ type GameState  = {
     enemies: Enemy[],
 }
 
-export {Position, Player, Enemy, GameState, Hitbox};
+export {Vector, Position, Player, Enemy, GameState, Hitbox};

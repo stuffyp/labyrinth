@@ -1,7 +1,8 @@
 import { User } from "./models/User";
-import {Position, Player, Enemy, GameState} from "./models/GameTypes";
+import {Position, Player, Enemy, GameState, Vector} from "../shared/GameTypes";
 import { randInt } from "./random";
 import { collides} from "./game-util";
+import {normalize, add, mult} from "../shared/vector-util";
 
 const CANVAS_WIDTH = 500;
 const CANVAS_HEIGHT = 500;
@@ -51,37 +52,16 @@ const checkCollisions = (gameState: GameState) => {
     }
 }
 
-const movePlayer = (roomCode: string, user: User, dir: string) => {
+const PLAYER_SPEED = 2;
+const movePlayer = (roomCode: string, user: User, dir: Vector) => {
   const gameState = gameStateMap.get(roomCode);
   if (!gameState) return;
   if (!gameState.players[user._id]) return;
-  const desiredPosition = {
+  let desiredPosition : Position = {
     x: gameState.players[user._id].position.x,
     y: gameState.players[user._id].position.y,
   };
-  const speed = 2;
-  if (dir === "NW") {
-    desiredPosition.x -= speed*.7;
-    desiredPosition.y += speed*.7;
-  } else if (dir === "NE") {
-    desiredPosition.x += speed*.7;
-    desiredPosition.y += speed*.7;
-  } else if (dir === "SW") {
-    desiredPosition.x -= speed*.7;
-    desiredPosition.y -= speed*.7;
-  } else if (dir === "SE") {
-    desiredPosition.x += speed*.7;
-    desiredPosition.y -= speed*.7;
-  }
-  else if (dir === "N") {
-    desiredPosition.y += speed;
-  } else if (dir === "S") {
-    desiredPosition.y -= speed;
-  } else if (dir === "W") {
-    desiredPosition.x -= speed;
-  } else if (dir === "E") {
-    desiredPosition.x += speed;
-  }
+  desiredPosition = add(desiredPosition, mult(PLAYER_SPEED, normalize(dir)));
   gameState.players[user._id].position = desiredPosition;
 }
 

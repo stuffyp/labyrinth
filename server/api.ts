@@ -4,6 +4,9 @@ import socketManager from "./server-socket";
 import lobbyManager from "./lobbies";
 const router = express.Router();
 
+const NO_USER = "no user :(";
+const NO_ROOM_CODE = "no room code :(";
+
 router.post("/login", auth.login);
 router.post("/logout", auth.logout);
 router.get("/whoami", (req, res) => {
@@ -41,7 +44,7 @@ router.get("/lobbies", (req, res) => {
     }
     res.send(ans);
   } else {
-    res.send("no user :(");
+    res.status(400).send(NO_USER);
   }
 });
 
@@ -55,26 +58,24 @@ router.get("/what-is-my-socket-id", (req, res) => {
 
 router.post("/create-lobby", (req, res) => {
   if (req.user){
+    if (lobbyManager.isCurrentlyActive(req.user)){
+      const msg = `${req.user._id} is currently active`;
+      return res.status(400).send(msg);
+    }
     const roomCode = lobbyManager.createRoom(req.user);
     res.send({code: roomCode});
   } else {
-    res.send("no user :(");
+    res.status(400).send(NO_USER);
   }
 });
-
-router.post("/hi", (req, res) => {
-  res.send({});
-})
 
 router.post("/start-game", (req, res) => {
   const roomCode = req.body.roomCode;
   if(typeof roomCode!=="string"){
-    res.send("no room code :(");
-    return;
+    return res.status(400).send(NO_ROOM_CODE);
   }
   if(!req.user){
-    res.send("no user :(");
-    return;
+    return res.status(400).send(NO_USER);
   }
   lobbyManager.startGame(req.user, roomCode).then(() =>
     {res.send({});}
@@ -83,10 +84,26 @@ router.post("/start-game", (req, res) => {
 
 router.post("/join-lobby", (req, res) => {
   if(req.user){
+    if (lobbyManager.isCurrentlyActive(req.user)){
+      const msg = `${req.user._id} is currently active`;
+      return res.status(400).send(msg);
+    }
     lobbyManager.joinRoom(req.user, req.body.roomCode);
     res.send({code: req.body.roomCode});
   } else {
-    res.send("no user :(");
+    res.status(400).send(NO_USER);
+  }
+});
+
+router.post("/rejoin-lobby", (req, res) => {
+  if(req.user){
+    if (lobbyManager.isCurrentlyActive(req.user)){
+      return res.send({});
+    }
+    lobbyManager.joinRoom(req.user, req.body.roomCode);
+    res.send({code: req.body.roomCode});
+  } else {
+    res.status(400).send(NO_USER);
   }
 });
 
@@ -94,10 +111,11 @@ router.post("/join-lobby", (req, res) => {
 router.get("/lobby", (req, res) => {
   const roomCode = req.query.roomCode;
   if(typeof roomCode!=="string"){
-    res.send("no room code :(");
-    return;
+    return res.status(400).send(NO_ROOM_CODE);
   }
-  if(req.user){
+  if (!req.user) {
+    return res.status(400).send(NO_USER);
+  }
     lobbyManager.getRoom(req.user, roomCode).then((userData) => {
       if(userData){
         res.send({
@@ -106,14 +124,11 @@ router.get("/lobby", (req, res) => {
         });
       } else {
         res.send({
-          users: [],
+          userData: {},
           roomExists: false
         });
       }
     });
-  } else {
-    res.send("no user :(");
-  }
 });
 
 // anything else falls to this "not found" case
