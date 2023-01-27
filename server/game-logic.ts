@@ -42,8 +42,6 @@ const updateGameState = (roomCode: string) => {
 const movePlayer = (roomCode: string, user: User, dir: string) => {
   const gameState = gameStateMap.get(roomCode);
   if (!gameState) return;
-  console.log(gameState);
-  console.log(user._id);
   const desiredPosition = {
     x: gameState.players[user._id].position.x,
     y: gameState.players[user._id].position.y,
