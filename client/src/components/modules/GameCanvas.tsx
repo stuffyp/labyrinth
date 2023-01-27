@@ -17,7 +17,7 @@ const GameCanvas = (props: GameCanvasProps) => {
     // remove event listener on unmount
     return () => {
       window.removeEventListener("keydown", input.handleKeydown);
-      window.removeEventListener("keydown", input.handleKeyup);
+      window.removeEventListener("keyup", input.handleKeyup);
       clear();
     };
   }, []);
