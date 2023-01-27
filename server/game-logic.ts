@@ -1,7 +1,7 @@
 import { User } from "./models/User";
 import {Position, Player, Enemy, GameState} from "./models/GameTypes";
 import { randInt } from "./random";
-import { createEmitAndSemanticDiagnosticsBuilderProgram } from "typescript";
+import { collides} from "./game-util";
 
 const CANVAS_WIDTH = 500;
 const CANVAS_HEIGHT = 500;
@@ -37,11 +37,24 @@ const updateGameState = (roomCode: string) => {
             enemy.position.x = CANVAS_WIDTH;
         }
     }
+    checkCollisions(gameState);
+}
+
+const checkCollisions = (gameState: GameState) => {
+    for (const key in gameState.players){
+        const player = gameState.players[key];
+        for (const enemy of gameState.enemies){
+            if (collides(player, enemy)){
+                delete gameState.players[key];
+            }
+        }
+    }
 }
 
 const movePlayer = (roomCode: string, user: User, dir: string) => {
   const gameState = gameStateMap.get(roomCode);
   if (!gameState) return;
+  if (!gameState.players[user._id]) return;
   const desiredPosition = {
     x: gameState.players[user._id].position.x,
     y: gameState.players[user._id].position.y,
