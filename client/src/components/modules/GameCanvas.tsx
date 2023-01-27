@@ -8,16 +8,14 @@ type GameCanvasProps = {
 };
 
 const GameCanvas = (props: GameCanvasProps) => {
-
   // add event listener on mount
   useEffect(() => {
     window.addEventListener("keydown", handleInput);
 
     // remove event listener on unmount
-    /*return () => {
+    return () => {
       window.removeEventListener("keydown", handleInput);
-      post("/api/despawn", { userid: props.userId });
-    };*/
+    };
   }, []);
 
   const handleInput = (e) => {
