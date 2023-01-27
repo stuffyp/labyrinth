@@ -1,4 +1,5 @@
 import { move } from "./client-socket";
+import { Vector } from "../../shared/GameTypes";
 
 const keysPressed = {
     ArrowUp: false,
@@ -18,23 +19,15 @@ const handleKeyup = (e: KeyboardEvent) => {
 
 const init = (roomCode : string) : ()=>void => {
     const clearID = setInterval(() => {
-        if (keysPressed.ArrowUp && keysPressed.ArrowLeft) {
-          move(roomCode, "NW");
-        } else if (keysPressed.ArrowUp && keysPressed.ArrowRight) {
-          move(roomCode, "NE");
-        } else if (keysPressed.ArrowDown && keysPressed.ArrowLeft) {
-          move(roomCode, "SW");
-        } else if (keysPressed.ArrowDown && keysPressed.ArrowRight) {
-          move(roomCode, "SE");
-        } else if (keysPressed.ArrowUp) {
-          move(roomCode, "N");
-        } else if (keysPressed.ArrowDown) {
-          move(roomCode, "S");
-        } else if (keysPressed.ArrowLeft) {
-          move(roomCode, "W");
-        } else if (keysPressed.ArrowRight) {
-          move(roomCode, "E");
+        const dir : Vector = {
+            x: 0,
+            y: 0
         }
+        if (keysPressed.ArrowLeft) dir.x -= 1;
+        if (keysPressed.ArrowRight) dir.x += 1;
+        if (keysPressed.ArrowUp) dir.y += 1;
+        if (keysPressed.ArrowDown) dir.y -= 1;
+        move(roomCode, dir);
       }, 1000 / 60);
     return () => clearInterval(clearID);
 }
