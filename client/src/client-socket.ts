@@ -8,6 +8,6 @@ socket.on("updateGame", (gameState) => {
     drawCanvas(gameState);
 });
 
-//export const move = (dir) => {
-//  socket.emit("move", dir);
-//};
+export const move = (roomCode, dir) => {
+  socket.emit("move", {roomCode: roomCode, dir: dir});
+};

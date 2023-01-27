@@ -3,6 +3,8 @@ import { Server, Socket } from "socket.io";
 import User from "../shared/User";
 let io: Server;
 
+const gameLogic = require("./game-logic");
+
 const userToSocketMap: Map<string, Socket> = new Map<string, Socket>(); // maps user ID to socket object
 const socketToUserMap: Map<string, User> = new Map<string, User>(); // maps socket ID to user object
 
@@ -41,6 +43,10 @@ export const init = (server: http.Server): void => {
       console.log(`socket has disconnected ${socket.id}`);
       const user = getUserFromSocketID(socket.id);
       if (user !== undefined) removeUser(user, socket);
+    });
+    socket.on("move", (response) =>{
+      const user = getUserFromSocketID(socket.id);
+      if (user) gameLogic.movePlayer(response.roomCode, user, response.dir);
     });
   });
 };

@@ -23,9 +23,30 @@ const updateGameState = (roomCode: string) => {
     
 }
 
+const movePlayer = (roomCode: string, user: User, dir: string) => {
+  const gameState = gameStateMap.get(roomCode);
+  if (!gameState) return;
+  console.log(gameState);
+  console.log(user._id);
+  const desiredPosition = {
+    x: gameState.players[user._id].position.x,
+    y: gameState.players[user._id].position.y,
+  };
+  if (dir === "up") {
+    desiredPosition.y += 10;
+  } else if (dir === "down") {
+    desiredPosition.y -= 10;
+  } else if (dir === "left") {
+    desiredPosition.x -= 10;
+  } else if (dir === "right") {
+    desiredPosition.x += 10;
+  }
+  gameState.players[user._id].position = desiredPosition;
+}
+
 const getGameState = (roomCode: string) => {
     return gameStateMap.get(roomCode);
 }
 
 export {CANVAS_WIDTH, CANVAS_HEIGHT};
-export {setupGame, getGameState, updateGameState};
+export {setupGame, getGameState, updateGameState, movePlayer};
