@@ -53,7 +53,7 @@ const LobbyWrapper = (props: LobbyProps) => {
           <Lobby roomCode={roomCode} users={users} hostIndex={hostIndex} />
           {isHost && <StartGameButton roomCode={roomCode as string} />}
           <br />
-          <GameCanvas />
+          <GameCanvas roomCode = {roomCode}/>
         </>
       ) : (
         <>{!loading && <NotFound />}</>
