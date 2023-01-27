@@ -10,6 +10,7 @@ const ROOM_CODE_LENGTH = 5;
 const FPS = 60;
 let io: Server;
 const roomToHostMap = new Map<string, string>();//room name, user id
+const roomToClearID = new Map<string, NodeJS.Timer>();
 
 const init = () => {
     io = socketManager.getIo();
@@ -19,6 +20,9 @@ const startGame = async (user: User, roomCode: string) => {
     if(roomToHostMap.get(roomCode)!==user._id){
         return;
     }
+    const oldClearID = roomToClearID.get(roomCode);
+    if (oldClearID) clearInterval(oldClearID);
+
     const sockets = await io.in(roomCode).fetchSockets();
     const users = sockets.map((socket) => getUserFromSocketID(socket.id));
     setupGame(roomCode, users.filter(user => user) as User[]);
@@ -29,6 +33,7 @@ const startGame = async (user: User, roomCode: string) => {
         updateGameState(roomCode);
         sendGameState(roomCode);
     }, 1000/FPS);
+    roomToClearID.set(roomCode, clearID);
 }
 
 const sendGameState = (roomCode: string) => {
