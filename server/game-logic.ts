@@ -59,14 +59,28 @@ const movePlayer = (roomCode: string, user: User, dir: string) => {
     x: gameState.players[user._id].position.x,
     y: gameState.players[user._id].position.y,
   };
-  if (dir === "up") {
-    desiredPosition.y += 10;
-  } else if (dir === "down") {
-    desiredPosition.y -= 10;
-  } else if (dir === "left") {
-    desiredPosition.x -= 10;
-  } else if (dir === "right") {
-    desiredPosition.x += 10;
+  const speed = 2;
+  if (dir === "NW") {
+    desiredPosition.x -= speed*.7;
+    desiredPosition.y += speed*.7;
+  } else if (dir === "NE") {
+    desiredPosition.x += speed*.7;
+    desiredPosition.y += speed*.7;
+  } else if (dir === "SW") {
+    desiredPosition.x -= speed*.7;
+    desiredPosition.y -= speed*.7;
+  } else if (dir === "SE") {
+    desiredPosition.x += speed*.7;
+    desiredPosition.y -= speed*.7;
+  }
+  else if (dir === "N") {
+    desiredPosition.y += speed;
+  } else if (dir === "S") {
+    desiredPosition.y -= speed;
+  } else if (dir === "W") {
+    desiredPosition.x -= speed;
+  } else if (dir === "E") {
+    desiredPosition.x += speed;
   }
   gameState.players[user._id].position = desiredPosition;
 }
