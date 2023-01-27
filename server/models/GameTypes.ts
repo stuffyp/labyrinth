@@ -1,3 +1,4 @@
+import { getPositionOfLineAndCharacter } from "typescript";
 import { User } from "./User";
 
 type Position  = {
@@ -5,16 +6,17 @@ type Position  = {
     y: number,
 }
 
-type Player = {
-    position: Position,
-    radius: number,
+type Player = Hitbox & {
     color: string,
 }
 
-type Enemy = {
-    position: Position,
-    radius: number,
+type Enemy = Hitbox & {
     color: string,
+}
+
+type Hitbox = {
+    position: Position;
+    radius: number;
 }
 
 type GameState  = {
@@ -22,4 +24,4 @@ type GameState  = {
     enemies: Enemy[],
 }
 
-export {Position, Player, Enemy, GameState};
+export {Position, Player, Enemy, GameState, Hitbox};

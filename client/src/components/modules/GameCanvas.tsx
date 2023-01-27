@@ -17,45 +17,42 @@ const GameCanvas = (props: GameCanvasProps) => {
   };
 
   useEffect(() => {
-    window.addEventListener("keydown", (e) =>{
-      keysPressed[e.key]=true;
-    });
-    window.addEventListener("keyup", (e) =>{
-      keysPressed[e.key]=false;
-    });
+    const handleInputDown = (e: KeyboardEvent) => {
+      e.preventDefault();
+      keysPressed[e.key] = true;
+    };
+    const handleInputUp = (e: KeyboardEvent) => {
+      keysPressed[e.key] = false;
+    };
+    window.addEventListener("keydown", handleInputDown);
+    window.addEventListener("keyup", handleInputUp);
 
     // remove event listener on unmount
-    /*return () => {
-      window.removeEventListener("keydown", handleInput);
-    };*/
+    return () => {
+      window.removeEventListener("keydown", handleInputDown);
+      window.removeEventListener("keydown", handleInputUp);
+    };
   }, []);
 
-  setInterval(()=>{
+  setInterval(() => {
     if (keysPressed.ArrowUp && keysPressed.ArrowLeft) {
       move(props.roomCode, "NW");
-    }
-    else if (keysPressed.ArrowUp && keysPressed.ArrowRight) {
+    } else if (keysPressed.ArrowUp && keysPressed.ArrowRight) {
       move(props.roomCode, "NE");
-    }
-    else if (keysPressed.ArrowDown && keysPressed.ArrowLeft) {
+    } else if (keysPressed.ArrowDown && keysPressed.ArrowLeft) {
       move(props.roomCode, "SW");
-    }
-    else if (keysPressed.ArrowDown && keysPressed.ArrowRight) {
+    } else if (keysPressed.ArrowDown && keysPressed.ArrowRight) {
       move(props.roomCode, "SE");
-    }
-    else if (keysPressed.ArrowUp){
+    } else if (keysPressed.ArrowUp) {
       move(props.roomCode, "N");
-    }
-    else if (keysPressed.ArrowDown){
+    } else if (keysPressed.ArrowDown) {
       move(props.roomCode, "S");
-    }
-    else if (keysPressed.ArrowLeft){
+    } else if (keysPressed.ArrowLeft) {
       move(props.roomCode, "W");
-    }
-    else if (keysPressed.ArrowRight){
+    } else if (keysPressed.ArrowRight) {
       move(props.roomCode, "E");
     }
-  },1000/60);
+  }, 1000 / 60);
 
   return (
     <canvas id="game-canvas" width={CANVAS_WIDTH} height={CANVAS_HEIGHT} /> //ref={canvasRef} {...props} />
