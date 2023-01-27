@@ -6,7 +6,6 @@ type Position  = {
 }
 
 type Player = {
-    user: User,
     position: Position,
     radius: number,
     color: string,
@@ -19,7 +18,7 @@ type Enemy = {
 }
 
 type GameState  = {
-    players : Player[],
+    players : {[key : string] : Player}, //user id to player
     enemies: Enemy[],
 }
 
