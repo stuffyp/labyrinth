@@ -104,6 +104,10 @@ export const drawCanvas = (drawState: GameState) => {
     const player = drawState.players[key];
     drawPlayer(context, player.position, player.radius, player.color);
   }
+
+  for (const enemy of drawState.enemies){
+    drawPlayer(context, enemy.position, enemy.radius, enemy.color);
+  }
   /*Object.values(drawState.players).forEach((p: Player) => {
     drawPlayer(context, p.position, p.radius, p.color);
   });*/
