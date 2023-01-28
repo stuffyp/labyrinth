@@ -9,6 +9,7 @@ type Position  = Vector
 
 type Player = Hitbox & {
     color: string,
+    moveInput : Vector,
 }
 
 type Enemy = Hitbox & {

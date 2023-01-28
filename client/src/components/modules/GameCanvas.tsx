@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import { CANVAS_WIDTH, CANVAS_HEIGHT, movePlayer } from "../../../../server/game-logic";
+import { movePlayer } from "../../../../server/game-logic";
 import { get, post } from "../../utilities";
 import { move } from "../../client-socket";
 import input from "../../input";
+import { CANVAS_WIDTH, CANVAS_HEIGHT } from "../../../../shared/canvas-constants";
 
 type GameCanvasProps = {
   roomCode?: string;
