@@ -3,9 +3,7 @@ import {Position, Player, Enemy, GameState, Vector} from "../shared/GameTypes";
 import { randInt } from "./random";
 import { collides} from "./game-util";
 import {normalize, add, mult} from "../shared/vector-util";
-
-const CANVAS_WIDTH = 500;
-const CANVAS_HEIGHT = 500;
+import { CANVAS_WIDTH, CANVAS_HEIGHT } from "../shared/canvas-constants";
 
 const gameStateMap : Map<string, GameState> = new Map<string, GameState>();
 
@@ -43,8 +41,9 @@ const updateGameState = (roomCode: string) => {
     }
     for (const key in gameState.players){
         const player = gameState.players[key];
-        player.position = add(player.position, 
+        const newPosition = add(player.position, 
             mult(PLAYER_SPEED, normalize(player.moveInput)));
+        if (checkBounds(newPosition)) player.position = newPosition;
     }
     checkCollisions(gameState);
 }
@@ -58,6 +57,11 @@ const checkCollisions = (gameState: GameState) => {
             }
         }
     }
+}
+
+const checkBounds = (position: Position) : boolean => {
+    return position.x>0 && position.x<CANVAS_WIDTH 
+    && position.y>0 && position.y<CANVAS_HEIGHT;
 }
 
 //TODO sync with the gameplay cycle
@@ -78,5 +82,4 @@ const getGameState = (roomCode: string) => {
     return gameStateMap.get(roomCode);
 }
 
-export {CANVAS_WIDTH, CANVAS_HEIGHT};
 export {setupGame, getGameState, updateGameState, movePlayer};
