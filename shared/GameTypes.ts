@@ -12,8 +12,27 @@ type Player = Hitbox & {
     moveInput : Vector,
 }
 
-type Enemy = Hitbox & {
+type EnemyInfo = Hitbox & {
     color: string,
+}
+
+enum Behavior {
+    IDLE,
+    MOVE,
+    ATTACK,
+    SPAWN,//reserved for when enemy spawns
+    DESPAWN,//reserved for when enemy despawns
+    SPECIAL,
+}
+
+interface EnemyBehavior {
+    frameCount : number,
+    behavior : Behavior,
+    update : ()=>void,
+}
+
+interface Enemy extends EnemyInfo, EnemyBehavior{
+    
 }
 
 type Hitbox = {
@@ -26,4 +45,5 @@ type GameState  = {
     enemies: Enemy[],
 }
 
+export {EnemyBehavior, Behavior} ;
 export {Vector, Position, Player, Enemy, GameState, Hitbox};

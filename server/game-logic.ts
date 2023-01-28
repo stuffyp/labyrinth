@@ -1,9 +1,10 @@
 import { User } from "./models/User";
-import {Position, Player, Enemy, GameState, Vector} from "../shared/GameTypes";
+import {Position, Player, Enemy, GameState, Vector, EnemyBehavior} from "../shared/GameTypes";
 import { randInt } from "./random";
-import { collides} from "./game-util";
+import { collides, randPos} from "./game-util";
 import {normalize, add, mult} from "../shared/vector-util";
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from "../shared/canvas-constants";
+import BasicEnemy from "./models/BasicEnemy";
 
 const gameStateMap : Map<string, GameState> = new Map<string, GameState>();
 
@@ -11,19 +12,15 @@ const setupGame = (roomCode: string, users: User[]) => {
     const newGameState : GameState = {players: {}, enemies: []};
     for (const user of users){
         newGameState.players[user._id] = {
-            position : {x: randInt(0, CANVAS_WIDTH), y: randInt(0, CANVAS_HEIGHT)}, 
+            position : randPos(), 
             radius: 10, 
             color: "red",
             moveInput : {x : 0, y: 0}
         };
     }
     //temp
-    for (let i = 0; i<3; i++){
-        newGameState.enemies.push({
-            position: {x: randInt(0, CANVAS_WIDTH), y: randInt(0, CANVAS_HEIGHT)},
-            radius: 10,
-            color: "blue"
-        });
+    for (let i = 0; i<10; i++){
+        newGameState.enemies.push(new BasicEnemy());
     }
     gameStateMap.set(roomCode, newGameState);
 }
@@ -34,10 +31,7 @@ const updateGameState = (roomCode: string) => {
     const gameState = gameStateMap.get(roomCode);
     if(!gameState) return;
     for (const enemy of gameState.enemies){
-        enemy.position.x -= ENEMY_SPEED;
-        if(enemy.position.x<0){
-            enemy.position.x = CANVAS_WIDTH;
-        }
+        enemy.update();
     }
     for (const key in gameState.players){
         const player = gameState.players[key];
@@ -81,7 +75,10 @@ const movePlayer = (roomCode: string, user: User, dir: Vector) => {
 }
 
 const getGameState = (roomCode: string) => {
-    return gameStateMap.get(roomCode);
+    const gameState = gameStateMap.get(roomCode);
+    if (!gameState) return;
+    //gameState.enemies = gameState.enemies.map((enemy)=>Object.assign({}, enemy));
+    return gameState;
 }
 
 export {setupGame, getGameState, updateGameState, movePlayer};

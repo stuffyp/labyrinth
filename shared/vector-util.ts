@@ -24,8 +24,24 @@ const add = (v1: Vector, v2: Vector) : Vector => {
     }
 }
 
+const sub = (v1 : Vector, v2 : Vector) : Vector => {
+    return {
+        x: v1.x-v2.x,
+        y: v1.y-v2.y
+    }
+}
+
 const dot = (v1: Vector, v2: Vector) : number => {
     return v1.x*v2.x+v1.y*v2.y;
 }
 
-export {magnitude, normalize, add, mult};
+const moveTowards = (start: Vector, end: Vector, distance: number) : Vector => {
+    const dir : Vector = sub(end, start);
+    return add(start, mult(distance/magnitude(dir), dir));
+}
+
+const distance = (v1 : Vector, v2: Vector) : number => {
+    return magnitude(sub(v1, v2));
+}
+
+export {magnitude, normalize, add, sub, mult, moveTowards, distance};
