@@ -15,7 +15,8 @@ const setupGame = (roomCode: string, users: User[]) => {
         newGameState.players[user._id] = {
             position : {x: randInt(0, CANVAS_WIDTH), y: randInt(0, CANVAS_HEIGHT)}, 
             radius: 10, 
-            color: "red"
+            color: "red",
+            moveInput : {x : 0, y: 0}
         };
     }
     //temp
@@ -29,14 +30,21 @@ const setupGame = (roomCode: string, users: User[]) => {
     gameStateMap.set(roomCode, newGameState);
 }
 
+const ENEMY_SPEED = 1;
+const PLAYER_SPEED = 2;
 const updateGameState = (roomCode: string) => {
     const gameState = gameStateMap.get(roomCode);
     if(!gameState) return;
     for (const enemy of gameState.enemies){
-        enemy.position.x -= 1;
+        enemy.position.x -= ENEMY_SPEED;
         if(enemy.position.x<0){
             enemy.position.x = CANVAS_WIDTH;
         }
+    }
+    for (const key in gameState.players){
+        const player = gameState.players[key];
+        player.position = add(player.position, 
+            mult(PLAYER_SPEED, normalize(player.moveInput)));
     }
     checkCollisions(gameState);
 }
@@ -52,17 +60,18 @@ const checkCollisions = (gameState: GameState) => {
     }
 }
 
-const PLAYER_SPEED = 2;
+//TODO sync with the gameplay cycle
 const movePlayer = (roomCode: string, user: User, dir: Vector) => {
   const gameState = gameStateMap.get(roomCode);
   if (!gameState) return;
   if (!gameState.players[user._id]) return;
-  let desiredPosition : Position = {
+  gameState.players[user._id].moveInput = dir;
+  /*let desiredPosition : Position = {
     x: gameState.players[user._id].position.x,
     y: gameState.players[user._id].position.y,
   };
   desiredPosition = add(desiredPosition, mult(PLAYER_SPEED, normalize(dir)));
-  gameState.players[user._id].position = desiredPosition;
+  gameState.players[user._id].position = desiredPosition;*/
 }
 
 const getGameState = (roomCode: string) => {
