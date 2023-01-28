@@ -41,9 +41,9 @@ const updateGameState = (roomCode: string) => {
     }
     for (const key in gameState.players){
         const player = gameState.players[key];
-        const newPosition = add(player.position, 
+        player.position = add(player.position, 
             mult(PLAYER_SPEED, normalize(player.moveInput)));
-        if (checkBounds(newPosition)) player.position = newPosition;
+        clampBounds(player.position);
     }
     checkCollisions(gameState);
 }
@@ -59,9 +59,11 @@ const checkCollisions = (gameState: GameState) => {
     }
 }
 
-const checkBounds = (position: Position) : boolean => {
-    return position.x>0 && position.x<CANVAS_WIDTH 
-    && position.y>0 && position.y<CANVAS_HEIGHT;
+const clampBounds = (position: Position) => {
+    if (position.x < 0) position.x = 0;
+    if (position.x > CANVAS_WIDTH) position.x = CANVAS_WIDTH;
+    if (position.y < 0) position.y = 0;
+    if (position.y > CANVAS_HEIGHT) position.y = CANVAS_HEIGHT;
 }
 
 //TODO sync with the gameplay cycle
