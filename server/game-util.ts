@@ -1,4 +1,6 @@
-import {Hitbox} from "../shared/GameTypes";
+import { CANVAS_WIDTH, CANVAS_HEIGHT } from "../shared/canvas-constants";
+import {Hitbox, Position} from "../shared/GameTypes";
+import { randInt } from "./random";
 
 const collides = (h1 : Hitbox, h2: Hitbox) : boolean => {
     const dx = h1.position.x-h2.position.x;
@@ -7,4 +9,11 @@ const collides = (h1 : Hitbox, h2: Hitbox) : boolean => {
     return dx*dx+dy*dy<radiusSum*radiusSum;
 }
 
-export {collides};
+const randPos = () : Position => {
+    return {
+        x: randInt(0, CANVAS_WIDTH),
+        y: randInt(0, CANVAS_HEIGHT)
+    };
+}
+
+export {collides, randPos};
