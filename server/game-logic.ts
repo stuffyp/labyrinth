@@ -5,11 +5,12 @@ import { collides, randPos} from "./game-util";
 import {normalize, add, mult} from "../shared/vector-util";
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from "../shared/canvas-constants";
 import BasicEnemy from "./models/BasicEnemy";
+import ShooterEnemy from "./models/ShooterEnemy";
 
 const gameStateMap : Map<string, GameState> = new Map<string, GameState>();
 
 const setupGame = (roomCode: string, users: User[]) => {
-    const newGameState : GameState = {players: {}, enemies: []};
+    const newGameState : GameState = {players: {}, enemies: [], enemyProjectiles: []};
     for (const user of users){
         newGameState.players[user._id] = {
             position : randPos(), 
@@ -20,7 +21,7 @@ const setupGame = (roomCode: string, users: User[]) => {
     }
     //temp
     for (let i = 0; i<10; i++){
-        newGameState.enemies.push(new BasicEnemy());
+        newGameState.enemies.push(new ShooterEnemy());
     }
     gameStateMap.set(roomCode, newGameState);
 }
@@ -31,7 +32,7 @@ const updateGameState = (roomCode: string) => {
     const gameState = gameStateMap.get(roomCode);
     if(!gameState) return;
     for (const enemy of gameState.enemies){
-        enemy.update();
+        gameState.enemyProjectiles.push(...enemy.update());
     }
     for (const key in gameState.players){
         const player = gameState.players[key];
@@ -40,6 +41,16 @@ const updateGameState = (roomCode: string) => {
         clampBounds(player.position);
     }
     checkCollisions(gameState);
+    for (let i = gameState.enemyProjectiles.length-1; i>=0; i--){
+        console.log(i);
+        console.log(gameState.enemyProjectiles.length);
+        let projectile = gameState.enemyProjectiles[i];
+        projectile.position = add(projectile.position, mult(projectile.speed, normalize(projectile.dir)));
+        if (checkOutOfBounds(projectile.position)){
+            gameState.enemyProjectiles.splice(i,1);
+        }
+    }
+    
 }
 
 const checkCollisions = (gameState: GameState) => {
@@ -50,7 +61,13 @@ const checkCollisions = (gameState: GameState) => {
                 delete gameState.players[key];
             }
         }
+        for (const projectile of gameState.enemyProjectiles){
+            if (collides(player, projectile)){
+                delete gameState.players[key];
+            }
+        }
     }
+
 }
 
 const clampBounds = (position: Position) => {
@@ -58,6 +75,12 @@ const clampBounds = (position: Position) => {
     if (position.x > CANVAS_WIDTH) position.x = CANVAS_WIDTH;
     if (position.y < 0) position.y = 0;
     if (position.y > CANVAS_HEIGHT) position.y = CANVAS_HEIGHT;
+}
+
+const checkOutOfBounds = (position: Position) : boolean => {
+    if (position.x < 0 || position.x > CANVAS_WIDTH) return true;
+    if (position.y < 0 || position.y > CANVAS_HEIGHT) return true;
+    return false; 
 }
 
 //TODO sync with the gameplay cycle

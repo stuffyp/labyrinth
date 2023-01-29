@@ -28,11 +28,16 @@ enum Behavior {
 interface EnemyBehavior {
     frameCount : number,
     behavior : Behavior,
-    update : ()=>void,
+    update : ()=>EnemyProjectile[],
 }
 
 interface Enemy extends EnemyInfo, EnemyBehavior{
     
+}
+
+type EnemyProjectile = Hitbox & {
+    dir: Vector,
+    speed: number,
 }
 
 type Hitbox = {
@@ -43,7 +48,8 @@ type Hitbox = {
 type GameState  = {
     players : {[key : string] : Player}, //user id to player
     enemies: Enemy[],
+    enemyProjectiles: EnemyProjectile[],
 }
 
-export {EnemyBehavior, Behavior} ;
+export {EnemyBehavior, Behavior, EnemyProjectile} ;
 export {Vector, Position, Player, Enemy, GameState, Hitbox};

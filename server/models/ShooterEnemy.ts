@@ -1,18 +1,18 @@
 import { CANVAS_WIDTH } from "../../shared/canvas-constants";
-import { Enemy, Behavior, Position } from "../../shared/GameTypes";
+import { Enemy, Behavior, Position, EnemyProjectile} from "../../shared/GameTypes";
 import { distance, moveTowards } from "../../shared/vector-util";
-import { randPos } from "../game-util";
+import { randPos, randDir } from "../game-util";
 
-interface BasicEnemyInterface extends Enemy {
+interface ShooterEnemyInterface extends Enemy {
     targetPosition : Position;
 }
 
 const RADIUS = 10;
 const SPEED = 3;
-const COLOR = "green";
+const COLOR = "blue";
 const IDLE_FRAMES = 30;
 
-class BasicEnemy implements BasicEnemyInterface {
+class ShooterEnemy implements ShooterEnemyInterface {
     position : Position;
     readonly radius = RADIUS;
     readonly color = COLOR;
@@ -33,6 +33,12 @@ class BasicEnemy implements BasicEnemyInterface {
                 if (--this.frameCount < 0) {
                     this.behavior = Behavior.MOVE;
                     this.targetPosition = randPos();
+                    return([{
+                        position: this.position,
+                        radius: 5,
+                        dir: randDir(),
+                        speed: 5,
+                    }]);
                 }
                 break;
             case Behavior.MOVE:
@@ -52,4 +58,4 @@ class BasicEnemy implements BasicEnemyInterface {
 
 }
 
-export default BasicEnemy;
+export default ShooterEnemy;

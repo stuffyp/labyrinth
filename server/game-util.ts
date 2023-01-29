@@ -16,4 +16,12 @@ const randPos = () : Position => {
     };
 }
 
-export {collides, randPos};
+const randDir = () : Position => {
+    const randAngle = 360 * Math.random();
+    return {
+        x: Math.cos(randAngle),
+        y: Math.sin(randAngle),
+    };
+}
+
+export {collides, randPos, randDir};
