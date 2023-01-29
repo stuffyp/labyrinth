@@ -1,4 +1,4 @@
-import { Position, Player, Enemy, GameState } from "../../shared/GameTypes";
+import { Position, Player, Enemy, GameState, EnemyProjectile} from "../../shared/GameTypes";
 let canvas;
 
 /** utils */
@@ -108,6 +108,11 @@ export const drawCanvas = (drawState: GameState) => {
   for (const enemy of drawState.enemies){
     drawPlayer(context, enemy.position, enemy.radius, enemy.color);
   }
+
+  for (const projectile of drawState.enemyProjectiles){
+    drawPlayer(context, projectile.position, projectile.radius, "green");
+  }
+
   /*Object.values(drawState.players).forEach((p: Player) => {
     drawPlayer(context, p.position, p.radius, p.color);
   });*/
