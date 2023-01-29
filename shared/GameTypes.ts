@@ -25,24 +25,29 @@ enum Behavior {
     SPECIAL,
 }
 
+type UpdateReturn = null | {
+    projectiles : EnemyProjectile[];
+}
+
 interface EnemyBehavior {
     frameCount : number,
     behavior : Behavior,
-    update : ()=>EnemyProjectile[],
+    update : ()=>UpdateReturn,
 }
 
 interface Enemy extends EnemyInfo, EnemyBehavior{
     
 }
 
-type EnemyProjectile = Hitbox & {
-    dir: Vector,
-    speed: number,
+interface EnemyProjectile extends Hitbox {
+    color : string,
+    update : ()=>void,
 }
 
 type Hitbox = {
     position: Position;
     radius: number;
+    destroyed : boolean;
 }
 
 type GameState  = {
@@ -51,5 +56,5 @@ type GameState  = {
     enemyProjectiles: EnemyProjectile[],
 }
 
-export {EnemyBehavior, Behavior, EnemyProjectile} ;
+export {EnemyBehavior, Behavior, EnemyProjectile, UpdateReturn} ;
 export {Vector, Position, Player, Enemy, GameState, Hitbox};
