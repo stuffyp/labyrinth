@@ -48,6 +48,10 @@ export const init = (server: http.Server): void => {
       const user = getUserFromSocketID(socket.id);
       if (user) gameLogic.movePlayer(response.roomCode, user, response.input);
     });
+    socket.on("shoot", (response) =>{
+      const user = getUserFromSocketID(socket.id);
+      if (user) gameLogic.playerShoot(response.roomCode, user, response.input);
+    });
   });
 };
 

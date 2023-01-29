@@ -1,12 +1,16 @@
-import { move } from "./client-socket";
+import { move, shoot } from "./client-socket";
 import { Vector } from "../../shared/GameTypes";
 
 const keysPressed = {
-    ArrowUp: false,
-    ArrowDown: false,
-    ArrowRight: false,
+    a: false,
+    d: false,
+    s: false,
+    w: false,
+    ' ': false,
     ArrowLeft: false,
-    z: false,
+    ArrowRight: false,
+    ArrowDown: false,
+    ArrowUp: false,
 };
 
 const handleKeydown = (e: KeyboardEvent) => {
@@ -19,22 +23,40 @@ const handleKeyup = (e: KeyboardEvent) => {
 };
 
 const init = (roomCode : string) : ()=>void => {
-    const clearID = setInterval(() => {
+    const moveLoop = setInterval(() => {
         const dir : Vector = {
             x: 0,
             y: 0
         }
-        if (keysPressed.ArrowLeft) dir.x -= 1;
-        if (keysPressed.ArrowRight) dir.x += 1;
-        if (keysPressed.ArrowUp) dir.y += 1;
-        if (keysPressed.ArrowDown) dir.y -= 1;
-        const sprint = keysPressed.z;
+        if (keysPressed.a) dir.x -= 1;
+        if (keysPressed.d) dir.x += 1;
+        if (keysPressed.s) dir.y -= 1;
+        if (keysPressed.w) dir.y += 1;
+        const sprint = keysPressed[' '];
         move(roomCode, {
             moveDir : dir,
             sprint: sprint,
         });
       }, 1000 / 60);
-    return () => clearInterval(clearID);
+    const shootLoop = setInterval(() =>{
+        const shootDir : Vector = {
+            x: 0,
+            y: 0
+        }
+        if (keysPressed.ArrowLeft) shootDir.x -= 1;
+        if (keysPressed.ArrowRight) shootDir.x += 1;
+        if (keysPressed.ArrowDown) shootDir.y -= 1;
+        if (keysPressed.ArrowUp) shootDir.y += 1;
+        if (shootDir.x !=0 || shootDir.y !=0){
+            shoot(roomCode, {
+                shootDir : shootDir,
+            });
+        }
+    }, 1000 / 10)
+    return () => {
+        clearInterval(moveLoop);
+        clearInterval(shootLoop);
+    };
 }
 
 export default {handleKeydown, handleKeyup, init};

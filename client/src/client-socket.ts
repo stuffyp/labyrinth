@@ -14,4 +14,8 @@ const move = (roomCode : string, input : InputType) => {
   socket.emit("move", {roomCode: roomCode, input : input});
 };
 
-export {move};
+const shoot = (roomCode : string, input : {shootDir : Vector}) => {
+  socket.emit("shoot", {roomCode: roomCode, input : input});
+};
+
+export {move, shoot};

@@ -3,7 +3,7 @@ import { movePlayer } from "../../../../server/game-logic";
 import { get, post } from "../../utilities";
 import { move } from "../../client-socket";
 import input from "../../input";
-import { CANVAS_WIDTH, CANVAS_HEIGHT } from "../../../../shared/canvas-constants";
+import { CANVAS_WIDTH, CANVAS_HEIGHT, WALL_TOP, WALL_SIDE } from "../../../../shared/canvas-constants";
 
 type GameCanvasProps = {
   roomCode?: string;
@@ -24,7 +24,7 @@ const GameCanvas = (props: GameCanvasProps) => {
   }, []);
 
   return (
-    <canvas id="game-canvas" width={CANVAS_WIDTH} height={CANVAS_HEIGHT} /> //ref={canvasRef} {...props} />
+    <canvas id="game-canvas" width={CANVAS_WIDTH+2*WALL_SIDE} height={CANVAS_HEIGHT+2*WALL_TOP} /> //ref={canvasRef} {...props} />
   );
 };
 
