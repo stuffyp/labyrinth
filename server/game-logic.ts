@@ -1,10 +1,13 @@
 import { User } from "./models/User";
-import {Position, Hitbox, GameState, Vector, UpdateReturn, EnemyProjectile} from "../shared/GameTypes";
+import {Position, Hitbox, GameState, Vector, UpdateReturn, EnemyProjectile, UpdateContext} from "../shared/GameTypes";
 import { collides, randPos} from "./game-util";
 import {normalize, add, mult} from "../shared/vector-util";
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from "../shared/canvas-constants";
 import BasicEnemy from "./models/BasicEnemy";
 import ShooterEnemy from "./models/ShooterEnemy";
+import HomingShooterEnemy from "./models/HomingShooterEnemy";
+import { getPositionOfLineAndCharacter } from "typescript";
+import { InputType } from "../shared/InputType";
 
 const gameStateMap : Map<string, GameState> = new Map<string, GameState>();
 
@@ -16,36 +19,47 @@ const setupGame = (roomCode: string, users: User[]) => {
             destroyed : false, 
             radius: 10, 
             color: "red",
-            moveInput : {x : 0, y: 0}
+            moveInput : {x : 0, y: 0},
+            isSprint : false,
         };
     }
     //temp
-    for (let i = 0; i<10; i++){
-        newGameState.enemies.push(new ShooterEnemy());
+    for (let i = 0; i<5; i++){
+        newGameState.enemies.push(new HomingShooterEnemy());
     }
     gameStateMap.set(roomCode, newGameState);
 }
 
 //const ENEMY_SPEED = 1;
-const PLAYER_SPEED = 2;
+const PLAYER_SPEED = 3;
+const SPRINT_SPEED = 8;
 const updateGameState = (roomCode: string) => {
     const gameState = gameStateMap.get(roomCode);
     if(!gameState) return;
-    for (const enemy of gameState.enemies){
-        if (enemy.destroyed) continue;
-        const updateVal : UpdateReturn = enemy.update();
-        if (updateVal) gameState.enemyProjectiles.push(...updateVal.projectiles);
-    }
+    const context : UpdateContext = {targets : new Array<Hitbox>};
     for (const key in gameState.players){
         const player = gameState.players[key];
         if (player.destroyed) continue;
+        const speed = player.isSprint ? SPRINT_SPEED : PLAYER_SPEED;
         player.position = add(player.position, 
-            mult(PLAYER_SPEED, normalize(player.moveInput)));
+            mult(speed, normalize(player.moveInput)));
         clampBounds(player.position);
+
+        const {position, radius, destroyed} = player;
+        context.targets.push({
+            position : position, 
+            radius : radius, 
+            destroyed : destroyed
+        });
+    }
+    for (const enemy of gameState.enemies){
+        if (enemy.destroyed) continue;
+        const updateVal : UpdateReturn = enemy.update(context);
+        if (updateVal) gameState.enemyProjectiles.push(...updateVal.projectiles);
     }
     for (const projectile of gameState.enemyProjectiles) {
         if (projectile.destroyed) continue;
-        projectile.update();
+        projectile.update(context);
         if (checkOutOfBounds(projectile)) projectile.destroyed = true;
     }
     checkCollisions(gameState);
@@ -89,11 +103,12 @@ const checkOutOfBounds = (hitbox: Hitbox) : boolean => {
 }
 
 //TODO sync with the gameplay cycle
-const movePlayer = (roomCode: string, user: User, dir: Vector) => {
+const movePlayer = (roomCode: string, user: User, input: InputType) => {
   const gameState = gameStateMap.get(roomCode);
   if (!gameState) return;
   if (!gameState.players[user._id]) return;
-  gameState.players[user._id].moveInput = dir;
+  gameState.players[user._id].moveInput = input.moveDir;
+  gameState.players[user._id].isSprint = input.sprint;
 }
 
 const getGameState = (roomCode: string) => {

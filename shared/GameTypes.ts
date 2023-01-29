@@ -5,9 +5,16 @@ type Vector = {
 
 type Position  = Vector
 
+type Hitbox = {
+    position: Position;
+    radius: number;
+    destroyed : boolean;
+}
+
 type Player = Hitbox & {
     color: string,
     moveInput : Vector,
+    isSprint : boolean,
 }
 
 type EnemyInfo = Hitbox & {
@@ -23,6 +30,10 @@ enum Behavior {
     SPECIAL,
 }
 
+type UpdateContext = {
+    targets: Hitbox[];
+}
+
 type UpdateReturn = null | {
     projectiles : EnemyProjectile[];
 }
@@ -30,7 +41,7 @@ type UpdateReturn = null | {
 interface EnemyBehavior {
     frameCount : number,
     behavior : Behavior,
-    update : ()=>UpdateReturn,
+    update : (context: UpdateContext)=>UpdateReturn,
 }
 
 interface Enemy extends EnemyInfo, EnemyBehavior{
@@ -39,13 +50,12 @@ interface Enemy extends EnemyInfo, EnemyBehavior{
 
 interface EnemyProjectile extends Hitbox {
     color : string,
-    update : ()=>void,
+    update : (context: UpdateContext)=>void,
 }
 
-type Hitbox = {
-    position: Position;
-    radius: number;
-    destroyed : boolean;
+interface ESmartProjectile extends EnemyProjectile {
+    frameCount : number,
+    behavior : Behavior,
 }
 
 type GameState  = {
@@ -54,5 +64,5 @@ type GameState  = {
     enemyProjectiles: EnemyProjectile[],
 }
 
-export {EnemyBehavior, Behavior, EnemyProjectile, UpdateReturn} ;
+export {EnemyBehavior, Behavior, EnemyProjectile, ESmartProjectile, UpdateReturn, UpdateContext} ;
 export {Vector, Position, Player, Enemy, GameState, Hitbox};
