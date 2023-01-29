@@ -1,5 +1,3 @@
-import { User } from "../server/models/User";
-
 type Vector = {
     x: number,
     y : number,

@@ -1,6 +1,5 @@
 import { User } from "./models/User";
-import {Position, Player, Hitbox, GameState, Vector, UpdateReturn, EnemyProjectile} from "../shared/GameTypes";
-import { randInt } from "./random";
+import {Position, Hitbox, GameState, Vector, UpdateReturn, EnemyProjectile} from "../shared/GameTypes";
 import { collides, randPos} from "./game-util";
 import {normalize, add, mult} from "../shared/vector-util";
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from "../shared/canvas-constants";

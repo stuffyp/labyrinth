@@ -1,5 +1,5 @@
 import { EnemyProjectile, Position, Vector } from "../../shared/GameTypes";
-import { randPos, randDir } from "../game-util";
+import { randDir } from "../game-util";
 import {add, mult} from "../../shared/vector-util";
 
 

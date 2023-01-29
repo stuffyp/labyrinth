@@ -1,4 +1,3 @@
-import { CANVAS_WIDTH } from "../../shared/canvas-constants";
 import { Enemy, Behavior, Position, EnemyProjectile} from "../../shared/GameTypes";
 import { distance, moveTowards } from "../../shared/vector-util";
 import { randPos, randDir } from "../game-util";
