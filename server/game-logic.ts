@@ -42,8 +42,6 @@ const updateGameState = (roomCode: string) => {
     }
     checkCollisions(gameState);
     for (let i = gameState.enemyProjectiles.length-1; i>=0; i--){
-        console.log(i);
-        console.log(gameState.enemyProjectiles.length);
         let projectile = gameState.enemyProjectiles[i];
         projectile.position = add(projectile.position, mult(projectile.speed, normalize(projectile.dir)));
         if (checkOutOfBounds(projectile.position)){
