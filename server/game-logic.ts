@@ -1,6 +1,5 @@
 import { User } from "./models/User";
-import {Position, Player, Enemy, GameState, Vector, EnemyBehavior} from "../shared/GameTypes";
-import { randInt } from "./random";
+import {Position, Hitbox, GameState, Vector, UpdateReturn, EnemyProjectile} from "../shared/GameTypes";
 import { collides, randPos} from "./game-util";
 import {normalize, add, mult} from "../shared/vector-util";
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from "../shared/canvas-constants";
@@ -13,7 +12,8 @@ const setupGame = (roomCode: string, users: User[]) => {
     const newGameState : GameState = {players: {}, enemies: [], enemyProjectiles: []};
     for (const user of users){
         newGameState.players[user._id] = {
-            position : randPos(), 
+            position : randPos(),
+            destroyed : false, 
             radius: 10, 
             color: "red",
             moveInput : {x : 0, y: 0}
@@ -26,45 +26,51 @@ const setupGame = (roomCode: string, users: User[]) => {
     gameStateMap.set(roomCode, newGameState);
 }
 
-const ENEMY_SPEED = 1;
+//const ENEMY_SPEED = 1;
 const PLAYER_SPEED = 2;
 const updateGameState = (roomCode: string) => {
     const gameState = gameStateMap.get(roomCode);
     if(!gameState) return;
     for (const enemy of gameState.enemies){
-        gameState.enemyProjectiles.push(...enemy.update());
+        if (enemy.destroyed) continue;
+        const updateVal : UpdateReturn = enemy.update();
+        if (updateVal) gameState.enemyProjectiles.push(...updateVal.projectiles);
     }
     for (const key in gameState.players){
         const player = gameState.players[key];
+        if (player.destroyed) continue;
         player.position = add(player.position, 
             mult(PLAYER_SPEED, normalize(player.moveInput)));
         clampBounds(player.position);
     }
-    checkCollisions(gameState);
-    for (let i = gameState.enemyProjectiles.length-1; i>=0; i--){
-        console.log(i);
-        console.log(gameState.enemyProjectiles.length);
-        let projectile = gameState.enemyProjectiles[i];
-        projectile.position = add(projectile.position, mult(projectile.speed, normalize(projectile.dir)));
-        if (checkOutOfBounds(projectile.position)){
-            gameState.enemyProjectiles.splice(i,1);
-        }
+    for (const projectile of gameState.enemyProjectiles) {
+        if (projectile.destroyed) continue;
+        projectile.update();
+        if (checkOutOfBounds(projectile)) projectile.destroyed = true;
     }
-    
+    checkCollisions(gameState);
+}
+
+const cleanUpGameState = (roomCode : string) => {
+    const gameState = gameStateMap.get(roomCode);
+    if(!gameState) return;
+    let projectiles : EnemyProjectile[] = gameState.enemyProjectiles;
+    gameState.enemyProjectiles = projectiles.filter((x) => !x.destroyed);
+    for (const key in gameState.players) {
+        if (gameState.players[key].destroyed) delete gameState.players[key];
+    }
 }
 
 const checkCollisions = (gameState: GameState) => {
     for (const key in gameState.players){
         const player = gameState.players[key];
         for (const enemy of gameState.enemies){
-            if (collides(player, enemy)){
-                delete gameState.players[key];
-            }
+            if (player.destroyed) break;
+            player.destroyed = collides(player, enemy);
         }
         for (const projectile of gameState.enemyProjectiles){
-            if (collides(player, projectile)){
-                delete gameState.players[key];
-            }
+            if (player.destroyed) break;
+            player.destroyed = collides(player, projectile);
         }
     }
 
@@ -77,10 +83,9 @@ const clampBounds = (position: Position) => {
     if (position.y > CANVAS_HEIGHT) position.y = CANVAS_HEIGHT;
 }
 
-const checkOutOfBounds = (position: Position) : boolean => {
-    if (position.x < 0 || position.x > CANVAS_WIDTH) return true;
-    if (position.y < 0 || position.y > CANVAS_HEIGHT) return true;
-    return false; 
+const checkOutOfBounds = (hitbox: Hitbox) : boolean => {
+    const pos = hitbox.position;
+    return pos.x<0 || pos.x>CANVAS_WIDTH || pos.y<0 || pos.y>CANVAS_HEIGHT;
 }
 
 //TODO sync with the gameplay cycle
@@ -89,19 +94,12 @@ const movePlayer = (roomCode: string, user: User, dir: Vector) => {
   if (!gameState) return;
   if (!gameState.players[user._id]) return;
   gameState.players[user._id].moveInput = dir;
-  /*let desiredPosition : Position = {
-    x: gameState.players[user._id].position.x,
-    y: gameState.players[user._id].position.y,
-  };
-  desiredPosition = add(desiredPosition, mult(PLAYER_SPEED, normalize(dir)));
-  gameState.players[user._id].position = desiredPosition;*/
 }
 
 const getGameState = (roomCode: string) => {
     const gameState = gameStateMap.get(roomCode);
     if (!gameState) return;
-    //gameState.enemies = gameState.enemies.map((enemy)=>Object.assign({}, enemy));
     return gameState;
 }
 
-export {setupGame, getGameState, updateGameState, movePlayer};
+export {setupGame, getGameState, updateGameState, cleanUpGameState, movePlayer};

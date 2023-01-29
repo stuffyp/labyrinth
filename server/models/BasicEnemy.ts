@@ -1,4 +1,3 @@
-import { CANVAS_WIDTH } from "../../shared/canvas-constants";
 import { Enemy, Behavior, Position } from "../../shared/GameTypes";
 import { distance, moveTowards } from "../../shared/vector-util";
 import { randPos } from "../game-util";
@@ -15,12 +14,14 @@ const IDLE_FRAMES = 30;
 class BasicEnemy implements BasicEnemyInterface {
     position : Position;
     readonly radius = RADIUS;
+    destroyed : boolean;
     readonly color = COLOR;
     frameCount : number;
     behavior : Behavior;
     targetPosition : Position;
 
     constructor(){
+        this.destroyed = false;
         this.position = randPos();
         this.targetPosition = randPos();
         this.behavior = Behavior.SPAWN;
@@ -47,7 +48,7 @@ class BasicEnemy implements BasicEnemyInterface {
                 this.frameCount = IDLE_FRAMES;
                 break;
         }
-        return [];
+        return null;
     }
 
 }

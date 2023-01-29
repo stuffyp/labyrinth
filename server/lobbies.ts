@@ -2,7 +2,7 @@ import { isAssertClause } from "typescript";
 import User from "../shared/User";
 import {randString} from "./random";
 import socketManager, { getSocketFromSocketID, getUserFromSocketID } from "./server-socket";
-import {setupGame, updateGameState, getGameState} from "./game-logic";
+import {setupGame, updateGameState, getGameState, cleanUpGameState} from "./game-logic";
 import { Server } from "socket.io";
 import { Socket } from "socket.io-client";
 
@@ -31,6 +31,7 @@ const startGame = async (user: User, roomCode: string) => {
             clearInterval(clearID);
         }
         updateGameState(roomCode);
+        cleanUpGameState(roomCode);
         sendGameState(roomCode);
     }, 1000/FPS);
     roomToClearID.set(roomCode, clearID);

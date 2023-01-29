@@ -17,7 +17,7 @@ const randPos = () : Position => {
 }
 
 const randDir = () : Position => {
-    const randAngle = 360 * Math.random();
+    const randAngle = 2 * Math.PI * Math.random();
     return {
         x: Math.cos(randAngle),
         y: Math.sin(randAngle),
