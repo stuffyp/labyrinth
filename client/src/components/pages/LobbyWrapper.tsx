@@ -49,12 +49,13 @@ const LobbyWrapper = (props: LobbyProps) => {
   return (
     <>
       {roomExists ? (
-        <>
-          <Lobby roomCode={roomCode} users={users} hostIndex={hostIndex} />
-          {isHost && <StartGameButton roomCode={roomCode as string} />}
-          <br />
+        <div className="u-flex">
+          <div>
+            <Lobby roomCode={roomCode} users={users} hostIndex={hostIndex} />
+            {isHost && <StartGameButton roomCode={roomCode as string} />}
+          </div>
           <GameCanvas roomCode={roomCode} />
-        </>
+        </div>
       ) : (
         <>{!loading && <NotFound />}</>
       )}
