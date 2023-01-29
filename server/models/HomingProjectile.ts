@@ -7,7 +7,7 @@ const RADIUS = 5;
 const COLOR = "yellow";
 const TOP_SPEED = 4;
 const ACCELERATION = 0.5;
-const HOMING_FRAMES = 300;
+const HOMING_FRAMES = 180;
 const INFINITY = 999999999;
 
 class HomingProjectile implements ESmartProjectile {
@@ -69,6 +69,7 @@ class HomingProjectile implements ESmartProjectile {
                         this.velocity = mult(this.topSpeed, normalize(this.velocity));
                     }
                 }
+                if (--this.frameCount < 0) this.behavior = Behavior.MOVE;
                 break;
             default:
                 this.behavior = Behavior.MOVE;

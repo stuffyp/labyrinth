@@ -7,6 +7,7 @@ import BasicEnemy from "./models/BasicEnemy";
 import ShooterEnemy from "./models/ShooterEnemy";
 import HomingShooterEnemy from "./models/HomingShooterEnemy";
 import { getPositionOfLineAndCharacter } from "typescript";
+import { InputType } from "../shared/InputType";
 
 const gameStateMap : Map<string, GameState> = new Map<string, GameState>();
 
@@ -18,7 +19,8 @@ const setupGame = (roomCode: string, users: User[]) => {
             destroyed : false, 
             radius: 10, 
             color: "red",
-            moveInput : {x : 0, y: 0}
+            moveInput : {x : 0, y: 0},
+            isSprint : false,
         };
     }
     //temp
@@ -29,7 +31,8 @@ const setupGame = (roomCode: string, users: User[]) => {
 }
 
 //const ENEMY_SPEED = 1;
-const PLAYER_SPEED = 2;
+const PLAYER_SPEED = 3;
+const SPRINT_SPEED = 8;
 const updateGameState = (roomCode: string) => {
     const gameState = gameStateMap.get(roomCode);
     if(!gameState) return;
@@ -37,8 +40,9 @@ const updateGameState = (roomCode: string) => {
     for (const key in gameState.players){
         const player = gameState.players[key];
         if (player.destroyed) continue;
+        const speed = player.isSprint ? SPRINT_SPEED : PLAYER_SPEED;
         player.position = add(player.position, 
-            mult(PLAYER_SPEED, normalize(player.moveInput)));
+            mult(speed, normalize(player.moveInput)));
         clampBounds(player.position);
 
         const {position, radius, destroyed} = player;
@@ -99,11 +103,12 @@ const checkOutOfBounds = (hitbox: Hitbox) : boolean => {
 }
 
 //TODO sync with the gameplay cycle
-const movePlayer = (roomCode: string, user: User, dir: Vector) => {
+const movePlayer = (roomCode: string, user: User, input: InputType) => {
   const gameState = gameStateMap.get(roomCode);
   if (!gameState) return;
   if (!gameState.players[user._id]) return;
-  gameState.players[user._id].moveInput = dir;
+  gameState.players[user._id].moveInput = input.moveDir;
+  gameState.players[user._id].isSprint = input.sprint;
 }
 
 const getGameState = (roomCode: string) => {

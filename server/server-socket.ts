@@ -46,7 +46,7 @@ export const init = (server: http.Server): void => {
     });
     socket.on("move", (response) =>{
       const user = getUserFromSocketID(socket.id);
-      if (user) gameLogic.movePlayer(response.roomCode, user, response.dir);
+      if (user) gameLogic.movePlayer(response.roomCode, user, response.input);
     });
   });
 };

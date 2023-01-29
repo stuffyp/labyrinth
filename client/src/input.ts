@@ -6,6 +6,7 @@ const keysPressed = {
     ArrowDown: false,
     ArrowRight: false,
     ArrowLeft: false,
+    z: false,
 };
 
 const handleKeydown = (e: KeyboardEvent) => {
@@ -27,7 +28,11 @@ const init = (roomCode : string) : ()=>void => {
         if (keysPressed.ArrowRight) dir.x += 1;
         if (keysPressed.ArrowUp) dir.y += 1;
         if (keysPressed.ArrowDown) dir.y -= 1;
-        move(roomCode, dir);
+        const sprint = keysPressed.z;
+        move(roomCode, {
+            moveDir : dir,
+            sprint: sprint,
+        });
       }, 1000 / 60);
     return () => clearInterval(clearID);
 }

@@ -14,6 +14,7 @@ type Hitbox = {
 type Player = Hitbox & {
     color: string,
     moveInput : Vector,
+    isSprint : boolean,
 }
 
 type EnemyInfo = Hitbox & {
