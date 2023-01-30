@@ -44,7 +44,7 @@ export const init = (server: http.Server): void => {
       const user = getUserFromSocketID(socket.id);
       if (user !== undefined) removeUser(user, socket);
     });
-    socket.on("move", (response) =>{
+    socket.on("input", (response) =>{
       const user = getUserFromSocketID(socket.id);
       if (user) gameLogic.movePlayer(response.roomCode, user, response.input);
     });

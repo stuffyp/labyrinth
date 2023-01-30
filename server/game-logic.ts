@@ -1,18 +1,20 @@
 import { User } from "./models/User";
-import {Position, Hitbox, GameState, Vector, UpdateReturn, EnemyProjectile, UpdateContext} from "../shared/GameTypes";
+import {Position, Hitbox, GameState, Vector, UpdateReturn, EnemyProjectile, AllyProjectile, UpdateContext} from "../shared/GameTypes";
 import { collides, randPos} from "./game-util";
 import {normalize, add, mult} from "../shared/vector-util";
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from "../shared/canvas-constants";
 import BasicEnemy from "./models/BasicEnemy";
 import ShooterEnemy from "./models/ShooterEnemy";
 import HomingShooterEnemy from "./models/HomingShooterEnemy";
-import { getPositionOfLineAndCharacter } from "typescript";
 import { InputType } from "../shared/InputType";
+import StraightAllyProjectile from "./models/StraightAllyProjectile";
+import StreamWeapon from "./models/StreamWeapon";
+import { WeaponUpdateReturn } from "../shared/Weapon";
 
 const gameStateMap : Map<string, GameState> = new Map<string, GameState>();
 
 const setupGame = (roomCode: string, users: User[]) => {
-    const newGameState : GameState = {players: {}, enemies: [], enemyProjectiles: []};
+    const newGameState : GameState = {players: {}, enemies: [], enemyProjectiles: [], allyProjectiles: []};
     for (const user of users){
         newGameState.players[user._id] = {
             position : randPos(),
@@ -21,6 +23,8 @@ const setupGame = (roomCode: string, users: User[]) => {
             color: "red",
             moveInput : {x : 0, y: 0},
             isSprint : false,
+            shootInput : {x : 0, y: 0},
+            weapon : new StreamWeapon(),
         };
     }
     //temp
@@ -45,6 +49,12 @@ const updateGameState = (roomCode: string) => {
             mult(speed, normalize(player.moveInput)));
         clampBounds(player.position);
 
+        const updateVal : WeaponUpdateReturn = player.weapon.update({
+            position: player.position,
+            shootDir: player.shootInput,
+        });
+        if (updateVal) gameState.allyProjectiles.push(...updateVal.projectiles);
+
         const {position, radius, destroyed} = player;
         context.targets.push({
             position : position, 
@@ -62,6 +72,11 @@ const updateGameState = (roomCode: string) => {
         projectile.update(context);
         if (checkOutOfBounds(projectile)) projectile.destroyed = true;
     }
+    for (const projectile of gameState.allyProjectiles) {
+        if (projectile.destroyed) continue;
+        projectile.update(context);
+        if (checkOutOfBounds(projectile)) projectile.destroyed = true;
+    }
     checkCollisions(gameState);
 }
 
@@ -70,6 +85,8 @@ const cleanUpGameState = (roomCode : string) => {
     if(!gameState) return;
     let projectiles : EnemyProjectile[] = gameState.enemyProjectiles;
     gameState.enemyProjectiles = projectiles.filter((x) => !x.destroyed);
+    let allyProjectiles : AllyProjectile[] = gameState.allyProjectiles;
+    gameState.allyProjectiles = allyProjectiles.filter((x) => !x.destroyed);
     for (const key in gameState.players) {
         if (gameState.players[key].destroyed) delete gameState.players[key];
     }
@@ -87,7 +104,15 @@ const checkCollisions = (gameState: GameState) => {
             player.destroyed = collides(player, projectile);
         }
     }
-
+    for (let i=gameState.enemies.length-1; i>=0; i--){
+        if (!gameState) return;
+        const enemy = gameState.enemies[i];
+        for (const projectile of gameState.allyProjectiles){
+            if (collides(enemy, projectile)){
+                gameState.enemies.splice(i, 1);
+            }
+        }
+    }
 }
 
 const clampBounds = (position: Position) => {
@@ -106,10 +131,19 @@ const checkOutOfBounds = (hitbox: Hitbox) : boolean => {
 const movePlayer = (roomCode: string, user: User, input: InputType) => {
   const gameState = gameStateMap.get(roomCode);
   if (!gameState) return;
-  if (!gameState.players[user._id]) return;
-  gameState.players[user._id].moveInput = input.moveDir;
-  gameState.players[user._id].isSprint = input.sprint;
+  const player = gameState.players[user._id];
+  if (!player) return;
+  player.moveInput = input.moveDir;
+  player.isSprint = input.sprint;
+  player.shootInput = input.shootDir;
 }
+
+/*const playerShoot = (roomCode: string, user: User, input: {shootDir: Vector}) => {
+    const gameState = gameStateMap.get(roomCode);
+    if (!gameState) return;
+    if (!gameState.players[user._id]) return;
+    gameState.allyProjectiles.push(new StraightAllyProjectile(gameState.players[user._id].position, 20, input.shootDir));
+}*/
 
 const getGameState = (roomCode: string) => {
     const gameState = gameStateMap.get(roomCode);

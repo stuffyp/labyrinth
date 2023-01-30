@@ -1,3 +1,5 @@
+import Weapon from "./Weapon";
+
 type Vector = {
     x: number,
     y : number,
@@ -15,6 +17,8 @@ type Player = Hitbox & {
     color: string,
     moveInput : Vector,
     isSprint : boolean,
+    shootInput : Vector,
+    weapon : Weapon,
 }
 
 type EnemyInfo = Hitbox & {
@@ -28,6 +32,10 @@ enum Behavior {
     SPAWN,//reserved for when enemy spawns
     DESPAWN,//reserved for when enemy despawns
     SPECIAL,
+    ACTIVE,
+    INACTIVE,
+    ALERT,
+    TRANSITION,
 }
 
 type UpdateContext = {
@@ -58,11 +66,17 @@ interface ESmartProjectile extends EnemyProjectile {
     behavior : Behavior,
 }
 
+interface AllyProjectile extends Hitbox {
+    color : string,
+    update : (context: UpdateContext)=>void,
+}
+
 type GameState  = {
     players : {[key : string] : Player}, //user id to player
     enemies: Enemy[],
     enemyProjectiles: EnemyProjectile[],
+    allyProjectiles: AllyProjectile[],
 }
 
-export {EnemyBehavior, Behavior, EnemyProjectile, ESmartProjectile, UpdateReturn, UpdateContext} ;
+export {EnemyBehavior, Behavior, EnemyProjectile, ESmartProjectile, AllyProjectile, UpdateReturn, UpdateContext} ;
 export {Vector, Position, Player, Enemy, GameState, Hitbox};

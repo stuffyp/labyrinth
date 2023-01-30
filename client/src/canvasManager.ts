@@ -1,29 +1,7 @@
+import { redirect } from "react-router";
+import { CANVAS_WIDTH, CANVAS_HEIGHT, WALL_TOP, WALL_SIDE } from "../../shared/canvas-constants";
 import { Position, Player, Enemy, GameState, EnemyProjectile} from "../../shared/GameTypes";
 let canvas;
-
-/** utils */
-/*
-type StateData = {
-  food: Food[];
-  players: Player[];
-}
-
-type Position = {
-  x: number;
-  y: number;
-};
-
-type Food = {
-  position: Position;
-  radius: number;
-  color: string;
-};
-
-type Player = {
-  position: Position;
-  radius: number;
-  color: string;
-}*/
 
 type Coord = {
   drawX: number;
@@ -49,8 +27,8 @@ Object.keys(sprites).forEach((key) => {
 const convertCoord = (position: Position) : Coord => {
   //if (!canvas) return;
   return {
-    drawX: position.x,
-    drawY: canvas.height - position.y,
+    drawX: WALL_SIDE + position.x,
+    drawY: -WALL_TOP + canvas.height - position.y,
   };
 };
 
@@ -88,6 +66,20 @@ const drawCircle = (context, position, radius, color) => {
   fillCircle(context, drawX, drawY, radius, color);
 };
 
+const drawClosedDoor = (context, side, color, isOpen) => {
+  const WALL_WIDTH = 50;
+  if (side=="up"){
+    context.fillStyle = color;
+    context.fillRect(0, 0, canvas.width, WALL_WIDTH);
+    context.fillStyle = "black";
+    if (!isOpen){
+      context.fillRect((canvas.width-WALL_WIDTH)/2, 0, WALL_WIDTH, WALL_WIDTH-10);
+    } else {
+      context.fillRect((canvas.width-WALL_WIDTH)/2, 0, WALL_WIDTH, WALL_WIDTH);
+    }
+  }
+}
+
 /** main draw */
 export const drawCanvas = (drawState: GameState) => {
   // use id of canvas element in HTML DOM to get reference to canvas object
@@ -98,6 +90,8 @@ export const drawCanvas = (drawState: GameState) => {
   // clear the canvas to black
   context.fillStyle = "black";
   context.fillRect(0, 0, canvas.width, canvas.height);
+
+  drawClosedDoor(context, "up", "#692525", drawState.enemies.length==0);
 
   // draw all the players
   for (const key in drawState.players){
@@ -113,6 +107,10 @@ export const drawCanvas = (drawState: GameState) => {
     drawPlayer(context, projectile.position, projectile.radius, projectile.color);
   }
 
+  for (const projectile of drawState.allyProjectiles){
+    drawPlayer(context, projectile.position, projectile.radius, projectile.color);
+  }
+  
   /*Object.values(drawState.players).forEach((p: Player) => {
     drawPlayer(context, p.position, p.radius, p.color);
   });*/
