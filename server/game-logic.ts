@@ -61,9 +61,9 @@ const setupGame = (roomCode: string, users: User[]) => {
     };
   }
   //temp
-  for (let i = 0; i < 5; i++) {
-    newGameState.enemies.push(new HomingShooterEnemy());
-  }
+  //for (let i = 0; i < 5; i++) {
+  //  newGameState.enemies.push(new HomingShooterEnemy());
+  //}
   gameStateMap.set(roomCode, newGameState);
 };
 
@@ -153,7 +153,7 @@ const enterNewRoom = (gameState: GameState, side: string) => {
     gameState.currentRoomY += 1;
     for(const key in gameState.players){
         gameState.players[key].position = {
-            x: gameState.players[key].position.x,
+            x: CANVAS_WIDTH/2,
             y: 0,
         }
     }
@@ -163,7 +163,7 @@ const enterNewRoom = (gameState: GameState, side: string) => {
     gameState.currentRoomY -= 1;
     for(const key in gameState.players){
         gameState.players[key].position = {
-            x: gameState.players[key].position.x,
+            x: CANVAS_WIDTH/2,
             y: CANVAS_HEIGHT,
         }
     }
@@ -174,7 +174,7 @@ const enterNewRoom = (gameState: GameState, side: string) => {
     for(const key in gameState.players){
         gameState.players[key].position = {
             x: 0,
-            y: gameState.players[key].position.y,
+            y: CANVAS_HEIGHT/2,
         }
     }
     gameState.enemyProjectiles = [];
@@ -184,7 +184,7 @@ const enterNewRoom = (gameState: GameState, side: string) => {
     for(const key in gameState.players){
         gameState.players[key].position = {
             x: CANVAS_WIDTH,
-            y: gameState.players[key].position.y,
+            y: CANVAS_HEIGHT/2,
         }
     }
     gameState.enemyProjectiles = [];
