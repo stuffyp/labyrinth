@@ -91,6 +91,8 @@ export const drawCanvas = (drawState: GameState) => {
   context.fillStyle = "black";
   context.fillRect(0, 0, canvas.width, canvas.height);
 
+  drawClosedDoor(context, "up", "#692525", drawState.enemies.length==0);
+
   // draw all the players
   for (const key in drawState.players){
     const player = drawState.players[key];
@@ -108,8 +110,6 @@ export const drawCanvas = (drawState: GameState) => {
   for (const projectile of drawState.allyProjectiles){
     drawPlayer(context, projectile.position, projectile.radius, projectile.color);
   }
-
-  drawClosedDoor(context, "up", "#692525", drawState.enemies.length==0);
   
   /*Object.values(drawState.players).forEach((p: Player) => {
     drawPlayer(context, p.position, p.radius, p.color);

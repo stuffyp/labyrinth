@@ -2,8 +2,8 @@ import { AllyProjectile, Position, Vector } from "../../shared/GameTypes";
 import {add, mult} from "../../shared/vector-util";
 
 const RADIUS = 5;
-const COLOR = "blue";
-const SPEED = 4;
+const COLOR = "pink";
+const SPEED = 15;
 class StraightAllyProjectile implements AllyProjectile {
     position : Position;
     readonly radius = RADIUS;
@@ -12,7 +12,7 @@ class StraightAllyProjectile implements AllyProjectile {
     readonly dir : Vector;
     readonly speed : number;
 
-    constructor(position : Position, speed : number = SPEED, dir : Vector){
+    constructor(position : Position, dir : Vector, speed : number = SPEED){
         this.position = position;
         this.destroyed = false;
         this.speed = speed;

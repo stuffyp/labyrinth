@@ -1,3 +1,5 @@
+import Weapon from "./Weapon";
+
 type Vector = {
     x: number,
     y : number,
@@ -15,6 +17,8 @@ type Player = Hitbox & {
     color: string,
     moveInput : Vector,
     isSprint : boolean,
+    shootInput : Vector,
+    weapon : Weapon,
 }
 
 type EnemyInfo = Hitbox & {
@@ -28,6 +32,10 @@ enum Behavior {
     SPAWN,//reserved for when enemy spawns
     DESPAWN,//reserved for when enemy despawns
     SPECIAL,
+    ACTIVE,
+    INACTIVE,
+    ALERT,
+    TRANSITION,
 }
 
 type UpdateContext = {
