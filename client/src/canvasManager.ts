@@ -1,6 +1,12 @@
 import { redirect } from "react-router";
-import { CANVAS_WIDTH, CANVAS_HEIGHT, WALL_TOP, WALL_SIDE } from "../../shared/canvas-constants";
-import { Position, Player, Enemy, GameState, EnemyProjectile} from "../../shared/GameTypes";
+import {
+  CANVAS_WIDTH,
+  CANVAS_HEIGHT,
+  WALL_TOP,
+  WALL_SIDE,
+  DOOR_WIDTH,
+} from "../../shared/canvas-constants";
+import { Position, Player, Enemy, GameState, EnemyProjectile } from "../../shared/GameTypes";
 let canvas;
 
 type Coord = {
@@ -24,7 +30,7 @@ Object.keys(sprites).forEach((key) => {
 });*/
 
 // converts a coordinate in a normal X Y plane to canvas coordinates
-const convertCoord = (position: Position) : Coord => {
+const convertCoord = (position: Position): Coord => {
   //if (!canvas) return;
   return {
     drawX: WALL_SIDE + position.x,
@@ -66,19 +72,42 @@ const drawCircle = (context, position, radius, color) => {
   fillCircle(context, drawX, drawY, radius, color);
 };
 
-const drawClosedDoor = (context, side, color, isOpen) => {
-  const WALL_WIDTH = 50;
-  if (side=="up"){
-    context.fillStyle = color;
-    context.fillRect(0, 0, canvas.width, WALL_WIDTH);
-    context.fillStyle = "black";
-    if (!isOpen){
-      context.fillRect((canvas.width-WALL_WIDTH)/2, 0, WALL_WIDTH, WALL_WIDTH-10);
+const drawWalls = (context, color) => {
+  context.fillStyle = color;
+  context.fillRect(0, 0, canvas.width, WALL_TOP);
+  context.fillRect(0, canvas.height - WALL_TOP, canvas.width, WALL_TOP);
+  context.fillRect(0, 0, WALL_SIDE, canvas.height);
+  context.fillRect(canvas.width - WALL_SIDE, 0, WALL_SIDE, canvas.height);
+};
+
+const drawDoor = (context, side, color, isOpen) => {
+  context.fillStyle = "black";
+  if (side == "up") {
+    if (!isOpen) {
+      context.fillRect((canvas.width - DOOR_WIDTH) / 2, 0, DOOR_WIDTH, WALL_TOP - 10);
     } else {
-      context.fillRect((canvas.width-WALL_WIDTH)/2, 0, WALL_WIDTH, WALL_WIDTH);
+      context.fillRect((canvas.width - DOOR_WIDTH) / 2, 0, DOOR_WIDTH, WALL_TOP);
+    }
+  } else if (side == "down") {
+    if (!isOpen) {
+      context.fillRect((canvas.width - DOOR_WIDTH) / 2, canvas.height - (WALL_TOP - 10), DOOR_WIDTH, WALL_TOP - 10);
+    } else {
+      context.fillRect((canvas.width - DOOR_WIDTH) / 2, canvas.height - WALL_TOP, DOOR_WIDTH, WALL_TOP);
+    }
+  } else if (side == "left") {
+    if (!isOpen) {
+      context.fillRect(0, (canvas.height - DOOR_WIDTH) / 2, WALL_SIDE - 10, DOOR_WIDTH);
+    } else {
+      context.fillRect(0, (canvas.height - DOOR_WIDTH) / 2, WALL_SIDE, DOOR_WIDTH);
+    }
+  } else if (side == "right") {
+    if (!isOpen) {
+      context.fillRect( canvas.width - (WALL_SIDE - 10), (canvas.height - DOOR_WIDTH) / 2, WALL_SIDE - 10, DOOR_WIDTH);
+    } else {
+      context.fillRect(canvas.width - WALL_SIDE, (canvas.height - DOOR_WIDTH) / 2, WALL_SIDE, DOOR_WIDTH);
     }
   }
-}
+};
 
 /** main draw */
 export const drawCanvas = (drawState: GameState) => {
@@ -86,33 +115,44 @@ export const drawCanvas = (drawState: GameState) => {
   canvas = document.getElementById("game-canvas");
   if (!canvas) return;
   const context = canvas.getContext("2d");
-
+  console.log( drawState.currentRoomX, drawState.currentRoomY );
   // clear the canvas to black
   context.fillStyle = "black";
   context.fillRect(0, 0, canvas.width, canvas.height);
 
-  drawClosedDoor(context, "up", "#692525", drawState.enemies.length==0);
+  drawWalls(context, "#692525");
+  if (drawState.minimap[drawState.currentRoomX][drawState.currentRoomY + 1].roomType != "ghost") {
+    drawDoor(context, "up", "#692525", drawState.enemies.length == 0);
+  }
+  if (drawState.minimap[drawState.currentRoomX][drawState.currentRoomY - 1].roomType != "ghost") {
+    drawDoor(context, "down", "#692525", drawState.enemies.length == 0);
+  }
+  if (drawState.minimap[drawState.currentRoomX - 1][drawState.currentRoomY].roomType != "ghost") {
+    drawDoor(context, "left", "#692525", drawState.enemies.length == 0);
+  }
+  if (drawState.minimap[drawState.currentRoomX + 1][drawState.currentRoomY].roomType != "ghost") {
+    drawDoor(context, "right", "#692525", drawState.enemies.length == 0);
+  }
 
   // draw all the players
-  for (const key in drawState.players){
+  for (const key in drawState.players) {
     const player = drawState.players[key];
     drawPlayer(context, player.position, player.radius, player.color);
   }
 
-  for (const enemy of drawState.enemies){
+  for (const enemy of drawState.enemies) {
     drawPlayer(context, enemy.position, enemy.radius, enemy.color);
   }
 
-  for (const projectile of drawState.enemyProjectiles){
+  for (const projectile of drawState.enemyProjectiles) {
     drawPlayer(context, projectile.position, projectile.radius, projectile.color);
   }
 
-  for (const projectile of drawState.allyProjectiles){
+  for (const projectile of drawState.allyProjectiles) {
     drawPlayer(context, projectile.position, projectile.radius, projectile.color);
   }
-  
+
   /*Object.values(drawState.players).forEach((p: Player) => {
     drawPlayer(context, p.position, p.radius, p.color);
   });*/
-
 };

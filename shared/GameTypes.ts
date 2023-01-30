@@ -1,82 +1,97 @@
 import Weapon from "./Weapon";
 
 type Vector = {
-    x: number,
-    y : number,
-}
+  x: number;
+  y: number;
+};
 
-type Position  = Vector
+type Position = Vector;
 
 type Hitbox = {
-    position: Position;
-    radius: number;
-    destroyed : boolean;
-}
+  position: Position;
+  radius: number;
+  destroyed: boolean;
+};
 
 type Player = Hitbox & {
-    color: string,
-    moveInput : Vector,
-    isSprint : boolean,
-    shootInput : Vector,
-    weapon : Weapon,
-}
+  color: string;
+  moveInput: Vector;
+  isSprint: boolean;
+  shootInput: Vector;
+  weapon: Weapon;
+};
 
 type EnemyInfo = Hitbox & {
-    color: string,
-}
+  color: string;
+};
 
 enum Behavior {
-    IDLE,
-    MOVE,
-    ATTACK,
-    SPAWN,//reserved for when enemy spawns
-    DESPAWN,//reserved for when enemy despawns
-    SPECIAL,
-    ACTIVE,
-    INACTIVE,
-    ALERT,
-    TRANSITION,
+  IDLE,
+  MOVE,
+  ATTACK,
+  SPAWN, //reserved for when enemy spawns
+  DESPAWN, //reserved for when enemy despawns
+  SPECIAL,
+  ACTIVE,
+  INACTIVE,
+  ALERT,
+  TRANSITION,
 }
 
 type UpdateContext = {
-    targets: Hitbox[];
-}
+  targets: Hitbox[];
+};
 
 type UpdateReturn = null | {
-    projectiles : EnemyProjectile[];
-}
+  projectiles: EnemyProjectile[];
+};
 
 interface EnemyBehavior {
-    frameCount : number,
-    behavior : Behavior,
-    update : (context: UpdateContext)=>UpdateReturn,
+  frameCount: number;
+  behavior: Behavior;
+  update: (context: UpdateContext) => UpdateReturn;
 }
 
-interface Enemy extends EnemyInfo, EnemyBehavior{
-    
-}
+interface Enemy extends EnemyInfo, EnemyBehavior {}
 
 interface EnemyProjectile extends Hitbox {
-    color : string,
-    update : (context: UpdateContext)=>void,
+  color: string;
+  update: (context: UpdateContext) => void;
 }
 
 interface ESmartProjectile extends EnemyProjectile {
-    frameCount : number,
-    behavior : Behavior,
+  frameCount: number;
+  behavior: Behavior;
 }
 
 interface AllyProjectile extends Hitbox {
-    color : string,
-    update : (context: UpdateContext)=>void,
+  color: string;
+  update: (context: UpdateContext) => void;
 }
 
-type GameState  = {
-    players : {[key : string] : Player}, //user id to player
-    enemies: Enemy[],
-    enemyProjectiles: EnemyProjectile[],
-    allyProjectiles: AllyProjectile[],
-}
+type Room = {
+  x: number;
+  y: number;
+  roomType: string;
+};
 
-export {EnemyBehavior, Behavior, EnemyProjectile, ESmartProjectile, AllyProjectile, UpdateReturn, UpdateContext} ;
-export {Vector, Position, Player, Enemy, GameState, Hitbox};
+type GameState = {
+  minimap: Room[][];
+  currentRoomX: number;
+  currentRoomY: number;
+  players: { [key: string]: Player }; //user id to player
+  enemies: Enemy[];
+  enemyProjectiles: EnemyProjectile[];
+  allyProjectiles: AllyProjectile[];
+};
+
+export {
+  EnemyBehavior,
+  Behavior,
+  EnemyProjectile,
+  ESmartProjectile,
+  AllyProjectile,
+  UpdateReturn,
+  UpdateContext,
+};
+export { Vector, Position, Player, Enemy, Room, GameState, Hitbox };
