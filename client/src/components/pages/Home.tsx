@@ -38,8 +38,12 @@ const Home = (props: Props) => {
       </GoogleOAuthProvider>
       <h1 className="u-textCenter">Labyrinth</h1>
       <div className="u-flexColumn u-flex-alignCenter">
-        <CreateLobbyButton />
-        <JoinLobbyButton />
+        <div className="flexButton-container">
+          <CreateLobbyButton />
+        </div>
+        <div className="flexButton-container">
+          <JoinLobbyButton />
+        </div>
       </div>
     </div>
   );

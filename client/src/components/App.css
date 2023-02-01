@@ -1,3 +1,10 @@
+:root {
+    --s : 8px;
+    --sm : 12px;
+    --m : 16px;
+    --l : 32px;
+}
+
 body {
     background-color: black;
     color: white;

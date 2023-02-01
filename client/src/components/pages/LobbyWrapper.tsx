@@ -8,6 +8,7 @@ import AlternateRoute from "../debugging/AlternateRoute";
 import GameCanvas from "../modules/GameCanvas";
 import { LeaveGameButton, StartGameButton } from "../modules/MenuButton";
 import APITester from "../debugging/APITester";
+import "./Lobby.css";
 
 type LobbyProps = {
   roomCode?: string;
@@ -50,10 +51,18 @@ const LobbyWrapper = (props: LobbyProps) => {
     <>
       {roomExists ? (
         <div className="u-flex">
-          <div>
-            <Lobby roomCode={roomCode} users={users} hostIndex={hostIndex} />
-            {isHost && <StartGameButton roomCode={roomCode as string} />}
-            <LeaveGameButton />
+          <div className="u-flexColumn u-flex-alignCenter">
+            <div className="text-container">
+              <Lobby roomCode={roomCode} users={users} hostIndex={hostIndex} />
+            </div>
+            {isHost && (
+              <div className="button-container">
+                <StartGameButton roomCode={roomCode as string} />
+              </div>
+            )}
+            <div className="button-container">
+              <LeaveGameButton />
+            </div>
           </div>
           <GameCanvas roomCode={roomCode} />
         </div>
