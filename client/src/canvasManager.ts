@@ -5,6 +5,7 @@ import {
   WALL_TOP,
   WALL_SIDE,
   DOOR_WIDTH,
+  DOOR_DEPTH,
 } from "../../shared/canvas-constants";
 import { Position, Player, Enemy, GameState, EnemyProjectile, RoomType } from "../../shared/GameTypes";
 let canvas;
@@ -15,6 +16,7 @@ type Coord = {
 };
 
 const WALL_COLOR = "#692525";
+const DOOR_THICKNESS = 10;
 
 // load sprites!
 /*let sprites = {
@@ -95,6 +97,14 @@ const drawWall = (context, color, center, width, height) => {
   context.fillRect(drawX-width/2, drawY-height/2, width, height);
 }
 
+const closeDoors = (context) => {
+  context.fillStyle = WALL_COLOR;
+  context.fillRect(DOOR_DEPTH-DOOR_THICKNESS, DOOR_DEPTH-DOOR_THICKNESS, CANVAS_WIDTH+2*DOOR_THICKNESS, DOOR_THICKNESS);
+  context.fillRect(DOOR_DEPTH-DOOR_THICKNESS, DOOR_DEPTH-DOOR_THICKNESS, DOOR_THICKNESS, CANVAS_HEIGHT+2*DOOR_THICKNESS);
+  context.fillRect(DOOR_DEPTH-DOOR_THICKNESS, canvas.height-DOOR_DEPTH, CANVAS_WIDTH+2*DOOR_THICKNESS, DOOR_THICKNESS);
+  context.fillRect(canvas.width-DOOR_DEPTH, DOOR_DEPTH-DOOR_THICKNESS, DOOR_THICKNESS, CANVAS_HEIGHT+2*DOOR_THICKNESS);  
+}
+
 const drawDoor = (context, side, color, isOpen) => {
   context.fillStyle = "black";
   if (side == "up") {
@@ -155,6 +165,7 @@ export const drawCanvas = (drawState: GameState) => {
   for (const wall of drawState.walls) {
     drawWall(context, WALL_COLOR, wall.center, wall.width, wall.height);
   }
+  if (drawState.enemies.length > 0) closeDoors(context);
 
   // draw all the players
   for (const key in drawState.players) {
