@@ -1,6 +1,7 @@
 import { get, post } from "../../utilities";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { navigate } from "@reach/router";
 
 const CreateLobbyButton = (props) => {
   const [roomCode, setRoomCode] = useState("");
@@ -53,15 +54,39 @@ type StartGameProps = {
   roomCode: string;
 };
 const StartGameButton = (props: StartGameProps) => {
+  const [active, setActive] = useState(true);
+  return (
+    <>
+      {active && (
+        <button
+          onClick={() => {
+            post("/api/start-game", { roomCode: props.roomCode }).then(() => {
+              setActive(false);
+            });
+          }}
+        >
+          Start Game
+        </button>
+      )}
+    </>
+  );
+};
+
+const LeaveGameButton = (props) => {
+  const navigate = useNavigate();
   return (
     <button
       onClick={() => {
-        post("/api/start-game", { roomCode: props.roomCode });
+        console.log("hi");
+        post("/api/leave-game").then(() => {
+          console.log("bye");
+          navigate("/");
+        });
       }}
     >
-      Start Game
+      Leave Game
     </button>
   );
 };
 
-export { CreateLobbyButton, JoinLobbyButton, StartGameButton };
+export { CreateLobbyButton, JoinLobbyButton, StartGameButton, LeaveGameButton };
