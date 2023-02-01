@@ -8,6 +8,7 @@ const RADIUS = 15;
 const SPEED = 5;
 const COLOR = "#20c98e";
 const IDLE_FRAMES = 60;
+const MIN_CHARGE_FRAMES = 120;
 const HP = 40;
 const INFINITY = 999999999;
 
@@ -35,6 +36,7 @@ class ChargeEnemy implements Enemy{
             case Behavior.IDLE:
                 if (--this.frameCount < 0) {
                     this.behavior = Behavior.MOVE;
+                    this.frameCount = MIN_CHARGE_FRAMES;
                     let closestTarget : Position = {x: CANVAS_WIDTH/2, y: CANVAS_HEIGHT/2};
                     let minDist : number = INFINITY;
                     for (const target of context.targets) {
@@ -49,10 +51,28 @@ class ChargeEnemy implements Enemy{
                 break;
             case Behavior.MOVE:
                 this.position = add(this.position, mult(SPEED, this.chargeDir));
-                if (this.position.x<0 || this.position.x > CANVAS_WIDTH || this.position.y < 0 || this.position.y > CANVAS_HEIGHT) {
+                let onWall = false;
+                if (this.position.x < 0){
+                    this.position.x = 0;
+                    onWall = true;
+                }
+                if (this.position.y < 0){
+                    this.position.y = 0;
+                    onWall = true;
+                }
+                if (this.position.x > CANVAS_WIDTH){
+                    this.position.x = CANVAS_WIDTH;
+                    onWall = true;
+                }
+                if (this.position.y > CANVAS_HEIGHT){
+                    this.position.y = CANVAS_HEIGHT;
+                    onWall = true;
+                }
+                if (onWall && this.frameCount <= 0) {
                     this.behavior = Behavior.IDLE;
                     this.frameCount = IDLE_FRAMES;
                 }
+                this.frameCount--;
                 break;
             default:
                 this.behavior = Behavior.IDLE;
