@@ -3,7 +3,7 @@ import { rotate } from "../../shared/vector-util";
 import Weapon, {WeaponContext, WeaponState, WeaponUpdateReturn} from "../../shared/Weapon";
 import StraightAllyProjectile from "./StraightAllyProjectile";
 
-const RELOAD = 48;
+const RELOAD = 36;
 class SplashWeapon implements Weapon {
     state : WeaponState;
     frameCount : number;
