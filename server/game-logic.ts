@@ -10,7 +10,7 @@ import {
   AllyProjectile,
   UpdateContext,
 } from "../shared/GameTypes";
-import { collides, randPos } from "./game-util";
+import { collides, Direction, randPos } from "./game-util";
 import { normalize, add, mult } from "../shared/vector-util";
 import { CANVAS_WIDTH, CANVAS_HEIGHT, DOOR_WIDTH } from "../shared/canvas-constants";
 import BasicEnemy from "./models/BasicEnemy";
@@ -148,62 +148,72 @@ const checkCollisions = (gameState: GameState) => {
   }
 };
 
-const enterNewRoom = (gameState: GameState, side: string) => {
-  if (side == "up") {
-    gameState.currentRoomY += 1;
-    for(const key in gameState.players){
-        gameState.players[key].position = {
-            x: CANVAS_WIDTH/2,
-            y: 0,
-        }
-    }
-    gameState.enemyProjectiles = [];
-    gameState.allyProjectiles = [];
-  } else if (side == "down") {
-    gameState.currentRoomY -= 1;
-    for(const key in gameState.players){
-        gameState.players[key].position = {
-            x: CANVAS_WIDTH/2,
-            y: CANVAS_HEIGHT,
-        }
-    }
-    gameState.enemyProjectiles = [];
-    gameState.allyProjectiles = [];
-  } else if (side == "right") {
-    gameState.currentRoomX += 1;
-    for(const key in gameState.players){
-        gameState.players[key].position = {
-            x: 0,
-            y: CANVAS_HEIGHT/2,
-        }
-    }
-    gameState.enemyProjectiles = [];
-    gameState.allyProjectiles = [];
-  } else if (side == "left") {
-    gameState.currentRoomX -= 1;
-    for(const key in gameState.players){
-        gameState.players[key].position = {
-            x: CANVAS_WIDTH,
-            y: CANVAS_HEIGHT/2,
-        }
-    }
-    gameState.enemyProjectiles = [];
-    gameState.allyProjectiles = [];
+const enterNewRoom = (gameState: GameState, side: Direction) => {
+  let enterPosition : Position = {x : 0, y : 0};
+  switch(side){
+    case Direction.UP:
+      gameState.currentRoomY += 1;
+      enterPosition = {
+        x: CANVAS_WIDTH/2,
+        y: 0,
+      };
+      break;
+    case Direction.DOWN:
+      gameState.currentRoomY -= 1;
+      enterPosition = {
+        x: CANVAS_WIDTH/2,
+        y: CANVAS_HEIGHT,
+      };
+      break;
+    case Direction.RIGHT:
+      gameState.currentRoomX += 1;
+      enterPosition = {
+        x: 0,
+        y: CANVAS_HEIGHT/2,
+      };
+      break;
+    case Direction.LEFT:
+      gameState.currentRoomX -= 1;
+      enterPosition = {
+        x: CANVAS_WIDTH,
+        y: CANVAS_HEIGHT/2,
+      };
+      break;
+    default:
+      break;
   }
+
+  for(const key in gameState.players){
+    gameState.players[key].position = enterPosition;
+  }
+  gameState.enemyProjectiles = [];
+  gameState.allyProjectiles = [];
 };
 
 const checkExitingRoom = (gameState: GameState, position: Position) => {
+  const isGhostRoom = (x : number, y : number) : boolean => {
+    return gameState.minimap[x][y].roomType==="ghost";
+  };
+
   if (position.y > CANVAS_HEIGHT && Math.abs(position.x - CANVAS_WIDTH / 2) < DOOR_WIDTH / 2) {
-    enterNewRoom(gameState, "up");
+    if (isGhostRoom(gameState.currentRoomX, gameState.currentRoomY+1)) return;
+    enterNewRoom(gameState, Direction.UP);
+    return;
   }
   if (position.y < 0 && Math.abs(position.x - CANVAS_WIDTH / 2) < DOOR_WIDTH / 2) {
-    enterNewRoom(gameState, "down");
+    if (isGhostRoom(gameState.currentRoomX, gameState.currentRoomY-1)) return;
+    enterNewRoom(gameState, Direction.DOWN);
+    return;
   }
   if (position.x > CANVAS_WIDTH && Math.abs(position.y - CANVAS_HEIGHT / 2) < DOOR_WIDTH / 2) {
-    enterNewRoom(gameState, "right");
+    if (isGhostRoom(gameState.currentRoomX+1, gameState.currentRoomY)) return;
+    enterNewRoom(gameState, Direction.RIGHT);
+    return;
   }
   if (position.x < 0 && Math.abs(position.y - CANVAS_HEIGHT / 2) < DOOR_WIDTH / 2) {
-    enterNewRoom(gameState, "left");
+    if (isGhostRoom(gameState.currentRoomX-1, gameState.currentRoomY)) return;
+    enterNewRoom(gameState, Direction.LEFT);
+    return;
   }
 };
 

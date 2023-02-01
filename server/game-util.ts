@@ -24,4 +24,11 @@ const randDir = () : Position => {
     };
 }
 
-export {collides, randPos, randDir};
+enum Direction {
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT
+}
+
+export {collides, randPos, randDir, Direction};
