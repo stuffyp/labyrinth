@@ -50,7 +50,7 @@ const LobbyWrapper = (props: LobbyProps) => {
   return (
     <>
       {roomExists ? (
-        <div className="u-flex">
+        <div className="u-flex u-flex-justifyCenter container">
           <div className="u-flexColumn u-flex-alignCenter">
             <div className="text-container">
               <Lobby roomCode={roomCode} users={users} hostIndex={hostIndex} />
@@ -65,7 +65,9 @@ const LobbyWrapper = (props: LobbyProps) => {
             </div>
           </div>
           <div className="vertical-line"></div>
-          <GameCanvas roomCode={roomCode} />
+          <div>
+            <GameCanvas roomCode={roomCode} />
+          </div>
         </div>
       ) : (
         <>{!loading && <NotFound />}</>

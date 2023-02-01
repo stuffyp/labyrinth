@@ -192,6 +192,7 @@ const getCurrentRoom = (gameState: GameState) : Room => {
 
 const BUFFER = 10;
 const enterNewRoom = (gameState: GameState, side: Direction) => {
+  getCurrentRoom(gameState).roomType = RoomType.EMPTY;
   let enterPosition : Position = {x : 0, y : 0};
   switch(side){
     case Direction.UP:

@@ -9,6 +9,7 @@ import {
   WALL_SIDE,
 } from "../../../../shared/canvas-constants";
 import { setRoom } from "../../client-socket";
+import "./GameCanvas.css";
 
 type GameCanvasProps = {
   roomCode?: string;
