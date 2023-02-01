@@ -19,15 +19,24 @@ type Hitbox = {
   destroyed: boolean;
 };
 
-type Player = Hitbox & {
+type HP = {
+  hp : number;
+  maxHp : number;
+  iFrames ?: number;
+  iFrameCount ?: number;
+}
+
+type Player = Hitbox & HP & {
   color: string;
   moveInput: Vector;
   isSprint: boolean;
   shootInput: Vector;
   weapon: Weapon;
+  iFrames : number;
+  iFrameCount : number;
 };
 
-type EnemyInfo = Hitbox & {
+type EnemyInfo = Hitbox & HP & {
   color: string;
 };
 

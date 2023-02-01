@@ -65,11 +65,34 @@ const fillCircle = (context, x, y, radius, color) => {
 };*/
 
 /** drawing functions */
-
-const drawPlayer = (context, position, radius, color) => {
+const drawPlayer = (context, position, radius, color, hp, iframe) => {
   const { drawX, drawY } = convertCoord(position);
   //drawSprite(context, drawX, drawY, radius, color);
   fillCircle(context, drawX, drawY, radius, color);
+  context.fillStyle = HP_BACK_COLOR;
+  context.fillRect(drawX-HP_LENGTH/2, drawY-radius-HP_HOVER, HP_LENGTH, HP_WIDTH);
+  context.fillStyle = HP_COLOR;
+  context.fillRect(drawX-HP_LENGTH/2, drawY-radius-HP_HOVER, hp*HP_LENGTH, HP_WIDTH);
+
+  if (iframe <= 0) return;
+  context.fillStyle = IFRAME_COLOR;
+  context.fillRect(drawX-HP_LENGTH/2, drawY-radius-HP_HOVER, iframe*HP_LENGTH, HP_WIDTH);
+};
+
+const HP_HOVER = 15;
+const HP_LENGTH = 40;
+const HP_WIDTH = 6;
+const HP_BACK_COLOR = "red";
+const HP_COLOR = "green";
+const IFRAME_COLOR = "cyan";
+const drawEnemy = (context, position, radius, color, hp) => {
+  const { drawX, drawY } = convertCoord(position);
+  //drawSprite(context, drawX, drawY, radius, color);
+  fillCircle(context, drawX, drawY, radius, color);
+  context.fillStyle = HP_BACK_COLOR;
+  context.fillRect(drawX-HP_LENGTH/2, drawY-radius-HP_HOVER, HP_LENGTH, HP_WIDTH);
+  context.fillStyle = HP_COLOR;
+  context.fillRect(drawX-HP_LENGTH/2, drawY-radius-HP_HOVER, hp*HP_LENGTH, HP_WIDTH);
 };
 
 const drawCircle = (context, position, radius, color) => {
@@ -164,19 +187,19 @@ export const drawCanvas = (drawState: GameState) => {
   // draw all the players
   for (const key in drawState.players) {
     const player = drawState.players[key];
-    drawPlayer(context, player.position, player.radius, player.color);
+    drawPlayer(context, player.position, player.radius, player.color, player.hp/player.maxHp, player.iFrameCount/player.iFrames);
   }
 
   for (const enemy of drawState.enemies) {
-    drawPlayer(context, enemy.position, enemy.radius, enemy.color);
+    drawEnemy(context, enemy.position, enemy.radius, enemy.color, enemy.hp/enemy.maxHp);
   }
 
   for (const projectile of drawState.enemyProjectiles) {
-    drawPlayer(context, projectile.position, projectile.radius, projectile.color);
+    drawCircle(context, projectile.position, projectile.radius, projectile.color);
   }
 
   for (const projectile of drawState.allyProjectiles) {
-    drawPlayer(context, projectile.position, projectile.radius, projectile.color);
+    drawCircle(context, projectile.position, projectile.radius, projectile.color);
   }
 
   /*Object.values(drawState.players).forEach((p: Player) => {

@@ -11,6 +11,7 @@ import {
   UpdateContext,
   RoomType,
   Wall,
+  Enemy,
 } from "../shared/GameTypes";
 import { collides, createWall, Direction, flip, handleWall, randPos } from "./game-util";
 import { normalize, add, mult } from "../shared/vector-util";
@@ -22,9 +23,12 @@ import { InputType } from "../shared/InputType";
 import StraightAllyProjectile from "./models/StraightAllyProjectile";
 import StreamWeapon from "./models/StreamWeapon";
 import { WeaponUpdateReturn } from "../shared/Weapon";
+import HomingProjectile from "./models/HomingProjectile";
 
 const gameStateMap: Map<string, GameState> = new Map<string, GameState>();
 
+const PLAYER_HP = 5;
+const PLAYER_IFRAMES = 90;
 const setupGame = (roomCode: string, users: User[]) => {
   const newGameState: GameState = {
     minimap: [],
@@ -67,6 +71,10 @@ const setupGame = (roomCode: string, users: User[]) => {
       isSprint: false,
       shootInput: { x: 0, y: 0 },
       weapon: new StreamWeapon(),
+      hp: PLAYER_HP,
+      maxHp: PLAYER_HP,
+      iFrames: PLAYER_IFRAMES,
+      iFrameCount: 0,
     };
   }
   //temp
@@ -86,6 +94,8 @@ const updateGameState = (roomCode: string) => {
   for (const key in gameState.players) {
     const player = gameState.players[key];
     if (player.destroyed) continue;
+    if (player.iFrameCount > 0) player.iFrameCount -= 1;
+
     const speed = player.isSprint ? SPRINT_SPEED : PLAYER_SPEED;
     player.position = add(player.position, mult(speed, normalize(player.moveInput)));
     if (gameState.enemies.length === 0) checkExitingRoom(gameState, player.position);
@@ -129,6 +139,8 @@ const cleanUpGameState = (roomCode: string) => {
   gameState.enemyProjectiles = projectiles.filter((x) => !x.destroyed);
   let allyProjectiles: AllyProjectile[] = gameState.allyProjectiles;
   gameState.allyProjectiles = allyProjectiles.filter((x) => !x.destroyed);
+  let enemies: Enemy[] = gameState.enemies;
+  gameState.enemies = enemies.filter((x) => !x.destroyed);
   for (const key in gameState.players) {
     if (gameState.players[key].destroyed) delete gameState.players[key];
   }
@@ -139,19 +151,28 @@ const checkCollisions = (gameState: GameState) => {
     const player = gameState.players[key];
     for (const enemy of gameState.enemies) {
       if (player.destroyed) break;
-      player.destroyed = collides(player, enemy);
+      if (collides(player, enemy) && player.iFrameCount<=0){
+        player.hp -= 1;
+        player.iFrameCount = player.iFrames;
+      }
     }
     for (const projectile of gameState.enemyProjectiles) {
       if (player.destroyed) break;
-      player.destroyed = collides(player, projectile);
+      if (collides(player, projectile) && player.iFrameCount<=0){
+        player.hp -= 1;
+        player.iFrameCount = player.iFrames;
+      }
     }
+    if (player.hp<=0) player.destroyed = true;
   }
   for (let i = gameState.enemies.length - 1; i >= 0; i--) {
     if (!gameState) return;
     const enemy = gameState.enemies[i];
     for (const projectile of gameState.allyProjectiles) {
       if (collides(enemy, projectile)) {
-        gameState.enemies.splice(i, 1);
+        enemy.hp -= 1;
+        projectile.destroyed = true;
+        if (enemy.hp <= 0) enemy.destroyed = true;
       }
     }
   }
