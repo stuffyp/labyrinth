@@ -4,7 +4,7 @@ import {add, mult} from "../../shared/vector-util";
 
 
 const RADIUS = 5;
-const COLOR = "orange";
+const COLOR = "#fa9a00";
 const SPEED = 4;
 class StraightProjectile implements EnemyProjectile {
     position : Position;

@@ -66,12 +66,14 @@ const setupGame = (roomCode: string, users: User[]) => {
   }
   newGameState.currentRoomX = 1;
   newGameState.currentRoomY = 1;
+  const playerColors = ["red", "green", "blue", "yellow", "pink"];
+  let i = 0;
   for (const user of users) {
     newGameState.players[user._id] = {
       position: randPos(),
       destroyed: false,
       radius: 10,
-      color: "red",
+      color: playerColors[i%5],
       moveInput: { x: 0, y: 0 },
       isSprint: false,
       shootInput: { x: 0, y: 0 },
@@ -81,6 +83,7 @@ const setupGame = (roomCode: string, users: User[]) => {
       iFrames: PLAYER_IFRAMES,
       iFrameCount: 0,
     };
+    i++;
   }
   //temp
   //for (let i = 0; i < 5; i++) {

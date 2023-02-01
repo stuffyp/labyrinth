@@ -69,6 +69,7 @@ const drawPlayer = (context, position, radius, color, hp, iframe) => {
   const { drawX, drawY } = convertCoord(position);
   //drawSprite(context, drawX, drawY, radius, color);
   fillCircle(context, drawX, drawY, radius, color);
+  fillCircle(context, drawX, drawY, 0.7*radius, "white");
   context.fillStyle = HP_BACK_COLOR;
   context.fillRect(drawX-HP_LENGTH/2, drawY-radius-HP_HOVER, HP_LENGTH, HP_WIDTH);
   context.fillStyle = HP_COLOR;
