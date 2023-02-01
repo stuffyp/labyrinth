@@ -1,5 +1,5 @@
-const CANVAS_WIDTH = 900;
-const CANVAS_HEIGHT = 600;
+const CANVAS_WIDTH = 800;
+const CANVAS_HEIGHT = 500;
 const WALL_TOP = 60;
 const WALL_SIDE = 60;
 const DOOR_WIDTH = 50;
