@@ -20,7 +20,6 @@ const CreateLobbyButton = (props) => {
       >
         Create Lobby
       </button>
-      <p>Room Code: {roomCode}</p>
     </div>
   );
 };

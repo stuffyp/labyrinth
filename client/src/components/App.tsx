@@ -12,7 +12,8 @@ import "../utilities.css";
 import NavBar from "./modules/NavBar";
 import Game from "./pages/Game";
 import LobbyWrapper from "./pages/LobbyWrapper";
-import APITester from "./debugging/APITester";
+//import APITester from "./debugging/APITester";
+import "./App.css";
 
 const App = () => {
   const [userId, setUserId] = useState<string | undefined>(undefined);
