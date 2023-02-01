@@ -54,20 +54,20 @@ type StartGameProps = {
   roomCode: string;
 };
 const StartGameButton = (props: StartGameProps) => {
-  const [active, setActive] = useState(true);
+  //const [active, setActive] = useState(true);
   return (
     <>
-      {active && (
-        <button
+      {
+        /*active && */ <button
           onClick={() => {
             post("/api/start-game", { roomCode: props.roomCode }).then(() => {
-              setActive(false);
+              //setActive(false);
             });
           }}
         >
-          Start Game
+          New Game
         </button>
-      )}
+      }
     </>
   );
 };
