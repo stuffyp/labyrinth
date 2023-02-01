@@ -29,7 +29,7 @@ import { spawnEnemies } from "./EnemySpawner";
 
 const gameStateMap: Map<string, GameState> = new Map<string, GameState>();
 
-const PLAYER_HP = 5;
+const PLAYER_HP = 10;
 const PLAYER_IFRAMES = 90;
 const setupGame = (roomCode: string, users: User[]) => {
   const newGameState: GameState = {
@@ -77,7 +77,7 @@ const setupGame = (roomCode: string, users: User[]) => {
       moveInput: { x: 0, y: 0 },
       isSprint: false,
       shootInput: { x: 0, y: 0 },
-      weapon: new SplashWeapon(),
+      weapon: Math.random()>0.5 ? new SplashWeapon() : new StreamWeapon(),
       hp: PLAYER_HP,
       maxHp: PLAYER_HP,
       iFrames: PLAYER_IFRAMES,
