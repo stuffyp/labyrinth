@@ -30,6 +30,7 @@ import { spawnEnemies } from "./EnemySpawner";
 import GolemBoss from "./models/GolemBoss";
 import SpawnerBoss from "./models/SpawnerBoss";
 import { randInt } from "./random";
+import FinalBoss from "./models/FinalBoss";
 
 const gameStateMap: Map<string, GameState> = new Map<string, GameState>();
 
@@ -79,7 +80,7 @@ const setupGame = (roomCode: string, users: User[]) => {
       if (i===10 && j<9 || i<9 && j===10) {
         newGameState.minimap[i][j].roomType = RoomType.GHOST;
       }
-      if (i===9 && j===9) {
+      if (i===15 && j===15) {
         newGameState.minimap[i][j].roomType = RoomType.BOSS;
       }
     }
@@ -274,7 +275,13 @@ const enterNewRoom = (gameState: GameState, side: Direction) => {
       gameState.enemies = spawnEnemies(gameState.currentRoomX+gameState.currentRoomY, side);
       break;
     case RoomType.BOSS:
-      gameState.enemies = gameState.currentRoomX===5 ? [new GolemBoss(side)] : [new SpawnerBoss(side)];
+      if (gameState.currentRoomX===5) {
+        gameState.enemies = [new GolemBoss(side)];
+      } else if (gameState.currentRoomX===9) {
+        gameState.enemies = [new SpawnerBoss(side)];
+      } else {
+        gameState.enemies = [new FinalBoss(side)];
+      }
       break;
     default:
       break;

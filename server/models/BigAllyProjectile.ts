@@ -4,7 +4,7 @@ import {add, mult} from "../../shared/vector-util";
 const RADIUS = 8;
 const COLOR = "#f08080";
 const SPEED = 16;
-const DAMAGE = 6;
+const DAMAGE = 5;
 class BigAllyProjectile implements AllyProjectile {
     position : Position;
     readonly radius = RADIUS;
