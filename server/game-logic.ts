@@ -23,16 +23,19 @@ import { InputType } from "../shared/InputType";
 import StraightAllyProjectile from "./models/StraightAllyProjectile";
 import StreamWeapon from "./models/StreamWeapon";
 import SplashWeapon from "./models/SplashWeapon";
+import SniperWeapon from "./models/SniperWeapon";
 import { WeaponUpdateReturn } from "../shared/Weapon";
 import HomingProjectile from "./models/HomingProjectile";
 import { spawnEnemies } from "./EnemySpawner";
 import GolemBoss from "./models/GolemBoss";
 import SpawnerBoss from "./models/SpawnerBoss";
+import { randInt } from "./random";
 
 const gameStateMap: Map<string, GameState> = new Map<string, GameState>();
 
 const PLAYER_HP = 10;
 const PLAYER_IFRAMES = 90;
+const weaponList = [StreamWeapon, SplashWeapon, SniperWeapon];
 const setupGame = (roomCode: string, users: User[]) => {
   const newGameState: GameState = {
     minimap: [],
@@ -94,7 +97,8 @@ const setupGame = (roomCode: string, users: User[]) => {
       moveInput: { x: 0, y: 0 },
       isSprint: false,
       shootInput: { x: 0, y: 0 },
-      weapon: Math.random()>0.5 ? new SplashWeapon() : new StreamWeapon(),
+      //weapon: Math.random()>0.5 ? new SplashWeapon() : new StreamWeapon(),
+      weapon : new weaponList[randInt(0, 3)](),
       hp: PLAYER_HP,
       maxHp: PLAYER_HP,
       iFrames: PLAYER_IFRAMES,
