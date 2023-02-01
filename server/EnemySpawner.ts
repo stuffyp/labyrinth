@@ -9,6 +9,7 @@ import AimEnemy from "./models/AimEnemy";
 import StarEnemy from "./models/StarEnemy";
 import GolemEnemy from "./models/GolemEnemy";
 import GolemBoss from "./models/GolemBoss";
+import SpawnerEnemy from "./models/SpawnerEnemy";
 
 const getBasic = (side : Direction) => {return new BasicEnemy(side)};
 const getShooter = (side : Direction) => {return new ShooterEnemy(side)};
@@ -17,10 +18,13 @@ const getCharge = (side : Direction) => {return new ChargeEnemy(side)};
 const getAim = (side : Direction) => {return new AimEnemy(side)};
 const getStar = (side : Direction) => {return new StarEnemy(side)};
 const getGolem = (side : Direction) => {return new GolemEnemy(side)};
+const getSpawner = (side : Direction) => {return new SpawnerEnemy(side)};
 
 const easy = [getBasic, getHoming, getCharge];
-const medium = [getHoming, getHoming, getCharge, getStar, getAim];
-const hard = [getBasic, getShooter, getAim, getStar, getGolem];
+//const easy = [getSpawner];
+const medium = [getBasic, getHoming, getHoming, getCharge, getStar, getAim];
+const hard = [getBasic, getShooter, getAim, getStar, getGolem, getSpawner];
+const endgame = [getHoming, getShooter, getGolem, getSpawner];
 
 const getEasy = (side : Direction) : Enemy => {
     return easy[randInt(0, easy.length)](side);
@@ -34,15 +38,21 @@ const getHard = (side : Direction) : Enemy => {
     return hard[Math.floor(Math.random()*hard.length)](side);
 }
 
+const getEndgame = (side : Direction) : Enemy => {
+    return endgame[Math.floor(Math.random()*endgame.length)](side);
+}
+
 export const spawnEnemies = (difficulty : number, side: Direction) : Enemy[] => {
     const ans : Enemy[] = [];
     let spawner;
     if (difficulty < 5) {
         spawner = getEasy;
-    } else if (difficulty < 15) {
+    } else if (difficulty < 14) {
         spawner = getMedium;
-    } else {
+    } else if (difficulty < 23) {
         spawner = getHard;
+    } else {
+        spawner = getEndgame;
     }
     for (let i = -10; i<difficulty; i += 5){
         ans.push(spawner(side));

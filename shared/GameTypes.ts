@@ -59,6 +59,7 @@ type UpdateContext = {
 
 type UpdateReturn = null | {
   projectiles: EnemyProjectile[];
+  enemies ?: Enemy[];  
 };
 
 interface EnemyBehavior {
