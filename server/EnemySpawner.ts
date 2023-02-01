@@ -4,13 +4,14 @@ import HomingShooterEnemy from "./models/HomingShooterEnemy";
 import { Enemy } from "../shared/GameTypes";
 import { Direction } from "./game-util";
 import { randInt } from "./random";
+import ChargeEnemy from "./models/ChargeEnemy";
 
 const getBasic = (side : Direction) => {return new BasicEnemy(side)};
 const getShooter = (side : Direction) => {return new ShooterEnemy(side)};
 const getHoming = (side : Direction) => {return new HomingShooterEnemy(side)};
-
-const easy = [getBasic, getHoming];
-const medium = [getBasic, getHoming, getHoming, getShooter];
+const getCharge = (side : Direction) => {return new ChargeEnemy(side)};
+const easy = [getBasic, getHoming, getCharge];
+const medium = [getBasic, getHoming, getHoming, getCharge, getShooter];
 
 const getEasy = (side : Direction) : Enemy => {
     return easy[randInt(0, easy.length)](side);

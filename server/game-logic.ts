@@ -90,8 +90,8 @@ const setupGame = (roomCode: string, users: User[]) => {
 };
 
 //const ENEMY_SPEED = 1;
-const PLAYER_SPEED = 3;
-const SPRINT_SPEED = 7;
+const PLAYER_SPEED = 7;
+const SPRINT_SPEED = 3;
 const updateGameState = (roomCode: string) => {
   const gameState = gameStateMap.get(roomCode);
   if (!gameState) return;
