@@ -2,6 +2,11 @@
     padding: var(--s);
 }
 
+.container {
+    margin : 0 auto;
+    padding : var(--m);
+}
+
 .text-container {
     margin: var(--s);
     text-align: center;
@@ -13,5 +18,6 @@
 }
 
 .vertical-line {
+    margin : var(--s);
     border-left: thick solid white;
 }
