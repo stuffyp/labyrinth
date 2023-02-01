@@ -5,7 +5,7 @@ import {add, sub, distance, magnitude, mult, normalize} from "../../shared/vecto
 
 const RADIUS = 5;
 const COLOR = "yellow";
-const TOP_SPEED = 4;
+const TOP_SPEED = 2.5;
 const ACCELERATION = 0.5;
 const HOMING_FRAMES = 180;
 const INFINITY = 999999999;

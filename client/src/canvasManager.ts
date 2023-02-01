@@ -6,13 +6,15 @@ import {
   WALL_SIDE,
   DOOR_WIDTH,
 } from "../../shared/canvas-constants";
-import { Position, Player, Enemy, GameState, EnemyProjectile } from "../../shared/GameTypes";
+import { Position, Player, Enemy, GameState, EnemyProjectile, RoomType } from "../../shared/GameTypes";
 let canvas;
 
 type Coord = {
   drawX: number;
   drawY: number;
 };
+
+const WALL_COLOR = "#692525";
 
 // load sprites!
 /*let sprites = {
@@ -37,6 +39,13 @@ const convertCoord = (position: Position): Coord => {
     drawY: -WALL_TOP + canvas.height - position.y,
   };
 };
+
+const convertWallCoord = (position : Position) : Coord => {
+  return {
+    drawX : position.x,
+    drawY: canvas.height-position.y
+  }
+}
 
 // fills a circle at a given x, y canvas coord with radius and color
 const fillCircle = (context, x, y, radius, color) => {
@@ -80,6 +89,12 @@ const drawWalls = (context, color) => {
   context.fillRect(canvas.width - WALL_SIDE, 0, WALL_SIDE, canvas.height);
 };
 
+const drawWall = (context, color, center, width, height) => {
+  context.fillStyle = color;
+  const {drawX, drawY} = convertWallCoord(center);
+  context.fillRect(drawX-width/2, drawY-height/2, width, height);
+}
+
 const drawDoor = (context, side, color, isOpen) => {
   context.fillStyle = "black";
   if (side == "up") {
@@ -111,27 +126,34 @@ const drawDoor = (context, side, color, isOpen) => {
 
 /** main draw */
 export const drawCanvas = (drawState: GameState) => {
+  const getRoom = (dx : number, dy : number) => {
+    return drawState.minimap[drawState.currentRoomX+dx][drawState.currentRoomY+dy];
+  }
+
   // use id of canvas element in HTML DOM to get reference to canvas object
   canvas = document.getElementById("game-canvas");
   if (!canvas) return;
   const context = canvas.getContext("2d");
-  console.log( drawState.currentRoomX, drawState.currentRoomY );
+  //console.log( drawState.currentRoomX, drawState.currentRoomY );
   // clear the canvas to black
   context.fillStyle = "black";
   context.fillRect(0, 0, canvas.width, canvas.height);
 
-  drawWalls(context, "#692525");
-  if (drawState.minimap[drawState.currentRoomX][drawState.currentRoomY + 1].roomType != "ghost") {
+  /*drawWalls(context, "#692525");
+  if (getRoom(0, 1).roomType !== RoomType.GHOST) {
     drawDoor(context, "up", "#692525", drawState.enemies.length == 0);
   }
-  if (drawState.minimap[drawState.currentRoomX][drawState.currentRoomY - 1].roomType != "ghost") {
+  if (getRoom(0, -1).roomType !== RoomType.GHOST) {
     drawDoor(context, "down", "#692525", drawState.enemies.length == 0);
   }
-  if (drawState.minimap[drawState.currentRoomX - 1][drawState.currentRoomY].roomType != "ghost") {
+  if (getRoom(-1, 0).roomType !== RoomType.GHOST) {
     drawDoor(context, "left", "#692525", drawState.enemies.length == 0);
   }
-  if (drawState.minimap[drawState.currentRoomX + 1][drawState.currentRoomY].roomType != "ghost") {
+  if (getRoom(1, 0).roomType !== RoomType.GHOST) {
     drawDoor(context, "right", "#692525", drawState.enemies.length == 0);
+  }*/
+  for (const wall of drawState.walls) {
+    drawWall(context, WALL_COLOR, wall.center, wall.width, wall.height);
   }
 
   // draw all the players
