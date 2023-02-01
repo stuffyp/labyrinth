@@ -1,6 +1,6 @@
 import { Enemy, Behavior, Position } from "../../shared/GameTypes";
 import { distance, moveTowards } from "../../shared/vector-util";
-import { randPos } from "../game-util";
+import { Direction, randPos } from "../game-util";
 
 interface BasicEnemyInterface extends Enemy {
     targetPosition : Position;
@@ -20,9 +20,9 @@ class BasicEnemy implements BasicEnemyInterface {
     behavior : Behavior;
     targetPosition : Position;
 
-    constructor(){
+    constructor(side ?: Direction){
         this.destroyed = false;
-        this.position = randPos();
+        this.position = randPos(side);
         this.targetPosition = randPos();
         this.behavior = Behavior.SPAWN;
         this.frameCount = IDLE_FRAMES;

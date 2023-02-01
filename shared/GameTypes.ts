@@ -7,6 +7,12 @@ type Vector = {
 
 type Position = Vector;
 
+type Wall = {
+  center : Position,
+  width : number,
+  height : number,
+}
+
 type Hitbox = {
   position: Position;
   radius: number;
@@ -69,16 +75,22 @@ interface AllyProjectile extends Hitbox {
   update: (context: UpdateContext) => void;
 }
 
+enum RoomType {
+  GHOST,
+  EMPTY,
+  ENCOUNTER,
+  BOSS,
+}
+
 type Room = {
-  x: number;
-  y: number;
-  roomType: string;
+  roomType: RoomType;
 };
 
 type GameState = {
   minimap: Room[][];
   currentRoomX: number;
   currentRoomY: number;
+  walls : Wall[];
   players: { [key: string]: Player }; //user id to player
   enemies: Enemy[];
   enemyProjectiles: EnemyProjectile[];
@@ -94,4 +106,4 @@ export {
   UpdateReturn,
   UpdateContext,
 };
-export { Vector, Position, Player, Enemy, Room, GameState, Hitbox };
+export { Vector, Position, Player, Enemy, Room, RoomType, GameState, Hitbox, Wall };

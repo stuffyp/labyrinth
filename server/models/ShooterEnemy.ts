@@ -1,6 +1,6 @@
 import { Enemy, Behavior, Position, EnemyProjectile} from "../../shared/GameTypes";
 import { distance, moveTowards } from "../../shared/vector-util";
-import { randPos, randDir } from "../game-util";
+import { randPos, randDir, Direction } from "../game-util";
 import StraightProjectile from "./StraightProjectile";
 
 interface ShooterEnemyInterface extends Enemy {
@@ -21,9 +21,9 @@ class ShooterEnemy implements ShooterEnemyInterface {
     behavior : Behavior;
     targetPosition : Position;
 
-    constructor(){
+    constructor(side ?: Direction){
         this.destroyed = false;
-        this.position = randPos();
+        this.position = randPos(side);
         this.targetPosition = randPos();
         this.behavior = Behavior.SPAWN;
         this.frameCount = IDLE_FRAMES;

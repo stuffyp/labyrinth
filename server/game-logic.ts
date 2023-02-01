@@ -9,8 +9,10 @@ import {
   EnemyProjectile,
   AllyProjectile,
   UpdateContext,
+  RoomType,
+  Wall,
 } from "../shared/GameTypes";
-import { collides, randPos } from "./game-util";
+import { collides, createWall, Direction, flip, handleWall, randPos } from "./game-util";
 import { normalize, add, mult } from "../shared/vector-util";
 import { CANVAS_WIDTH, CANVAS_HEIGHT, DOOR_WIDTH } from "../shared/canvas-constants";
 import BasicEnemy from "./models/BasicEnemy";
@@ -28,6 +30,12 @@ const setupGame = (roomCode: string, users: User[]) => {
     minimap: [],
     currentRoomX: 0,
     currentRoomY: 0,
+    walls: createWall(new Map<Direction, boolean>([
+      [Direction.LEFT, false],
+      [Direction.RIGHT, true],
+      [Direction.DOWN, false],
+      [Direction.UP, true],
+    ])),
     players: {},
     enemies: [],
     enemyProjectiles: [],
@@ -37,12 +45,13 @@ const setupGame = (roomCode: string, users: User[]) => {
     newGameState.minimap.push([]);
     for (let j = 0; j < 5; j++) {
       newGameState.minimap[i].push({
-        x: i,
-        y: j,
-        roomType: "empty",
+        roomType: RoomType.ENCOUNTER,
       });
       if (i == 0 || i == 4 || j == 0 || j == 4) {
-        newGameState.minimap[i][j].roomType = "ghost";
+        newGameState.minimap[i][j].roomType = RoomType.GHOST;
+      }
+      if (i==1 && j==1) {
+        newGameState.minimap[i][j].roomType = RoomType.EMPTY;
       }
     }
   }
@@ -69,7 +78,7 @@ const setupGame = (roomCode: string, users: User[]) => {
 
 //const ENEMY_SPEED = 1;
 const PLAYER_SPEED = 3;
-const SPRINT_SPEED = 8;
+const SPRINT_SPEED = 7;
 const updateGameState = (roomCode: string) => {
   const gameState = gameStateMap.get(roomCode);
   if (!gameState) return;
@@ -80,7 +89,7 @@ const updateGameState = (roomCode: string) => {
     const speed = player.isSprint ? SPRINT_SPEED : PLAYER_SPEED;
     player.position = add(player.position, mult(speed, normalize(player.moveInput)));
     if (gameState.enemies.length == 0) checkExitingRoom(gameState, player.position);
-    clampBounds(player.position);
+    clampBounds(player, gameState.walls, gameState.enemies.length > 0);
 
     const updateVal: WeaponUpdateReturn = player.weapon.update({
       position: player.position,
@@ -148,70 +157,114 @@ const checkCollisions = (gameState: GameState) => {
   }
 };
 
-const enterNewRoom = (gameState: GameState, side: string) => {
-  if (side == "up") {
-    gameState.currentRoomY += 1;
-    for(const key in gameState.players){
-        gameState.players[key].position = {
-            x: CANVAS_WIDTH/2,
-            y: 0,
-        }
-    }
-    gameState.enemyProjectiles = [];
-    gameState.allyProjectiles = [];
-  } else if (side == "down") {
-    gameState.currentRoomY -= 1;
-    for(const key in gameState.players){
-        gameState.players[key].position = {
-            x: CANVAS_WIDTH/2,
-            y: CANVAS_HEIGHT,
-        }
-    }
-    gameState.enemyProjectiles = [];
-    gameState.allyProjectiles = [];
-  } else if (side == "right") {
-    gameState.currentRoomX += 1;
-    for(const key in gameState.players){
-        gameState.players[key].position = {
-            x: 0,
-            y: CANVAS_HEIGHT/2,
-        }
-    }
-    gameState.enemyProjectiles = [];
-    gameState.allyProjectiles = [];
-  } else if (side == "left") {
-    gameState.currentRoomX -= 1;
-    for(const key in gameState.players){
-        gameState.players[key].position = {
-            x: CANVAS_WIDTH,
-            y: CANVAS_HEIGHT/2,
-        }
-    }
-    gameState.enemyProjectiles = [];
-    gameState.allyProjectiles = [];
+const getCurrentRoom = (gameState: GameState) : Room => {
+  return gameState.minimap[gameState.currentRoomX][gameState.currentRoomY];
+}
+
+const BUFFER = 10;
+const enterNewRoom = (gameState: GameState, side: Direction) => {
+  let enterPosition : Position = {x : 0, y : 0};
+  switch(side){
+    case Direction.UP:
+      gameState.currentRoomY += 1;
+      enterPosition = {
+        x: CANVAS_WIDTH/2,
+        y: BUFFER,
+      };
+      break;
+    case Direction.DOWN:
+      gameState.currentRoomY -= 1;
+      enterPosition = {
+        x: CANVAS_WIDTH/2,
+        y: CANVAS_HEIGHT-BUFFER,
+      };
+      break;
+    case Direction.RIGHT:
+      gameState.currentRoomX += 1;
+      enterPosition = {
+        x: BUFFER,
+        y: CANVAS_HEIGHT/2,
+      };
+      break;
+    case Direction.LEFT:
+      gameState.currentRoomX -= 1;
+      enterPosition = {
+        x: CANVAS_WIDTH-BUFFER,
+        y: CANVAS_HEIGHT/2,
+      };
+      break;
+    default:
+      break;
   }
+
+  for(const key in gameState.players){
+    gameState.players[key].position = enterPosition;
+  }
+  gameState.enemyProjectiles = [];
+  gameState.allyProjectiles = [];
+
+  switch(getCurrentRoom(gameState).roomType){
+    case RoomType.EMPTY:
+      break;
+    case RoomType.ENCOUNTER:
+      for (let i = 0; i < 5; i++) {
+        gameState.enemies.push(new HomingShooterEnemy(side));
+      }
+      break;
+    default:
+      break;
+  }
+
+  const isGhostRoom = (dx : number, dy : number) : boolean => {
+    return gameState.minimap[gameState.currentRoomX+dx][gameState.currentRoomY+dy].roomType===RoomType.GHOST;
+  };
+
+  gameState.walls = createWall(new Map<Direction, boolean>([
+    [Direction.LEFT, !isGhostRoom(-1, 0)],
+    [Direction.RIGHT, !isGhostRoom(1, 0)],
+    [Direction.DOWN, !isGhostRoom(0, -1)],
+    [Direction.UP, !isGhostRoom(0, 1)],
+  ]));
 };
 
 const checkExitingRoom = (gameState: GameState, position: Position) => {
+  const isGhostRoom = (x : number, y : number) : boolean => {
+    return gameState.minimap[x][y].roomType===RoomType.GHOST;
+  };
+
   if (position.y > CANVAS_HEIGHT && Math.abs(position.x - CANVAS_WIDTH / 2) < DOOR_WIDTH / 2) {
-    enterNewRoom(gameState, "up");
+    if (isGhostRoom(gameState.currentRoomX, gameState.currentRoomY+1)) return;
+    enterNewRoom(gameState, Direction.UP);
+    return;
   }
   if (position.y < 0 && Math.abs(position.x - CANVAS_WIDTH / 2) < DOOR_WIDTH / 2) {
-    enterNewRoom(gameState, "down");
+    if (isGhostRoom(gameState.currentRoomX, gameState.currentRoomY-1)) return;
+    enterNewRoom(gameState, Direction.DOWN);
+    return;
   }
   if (position.x > CANVAS_WIDTH && Math.abs(position.y - CANVAS_HEIGHT / 2) < DOOR_WIDTH / 2) {
-    enterNewRoom(gameState, "right");
+    if (isGhostRoom(gameState.currentRoomX+1, gameState.currentRoomY)) return;
+    enterNewRoom(gameState, Direction.RIGHT);
+    return;
   }
   if (position.x < 0 && Math.abs(position.y - CANVAS_HEIGHT / 2) < DOOR_WIDTH / 2) {
-    enterNewRoom(gameState, "left");
+    if (isGhostRoom(gameState.currentRoomX-1, gameState.currentRoomY)) return;
+    enterNewRoom(gameState, Direction.LEFT);
+    return;
   }
 };
 
-const clampBounds = (position: Position) => {
-  if (position.x < 0) position.x = 0;
-  if (position.x > CANVAS_WIDTH) position.x = CANVAS_WIDTH;
-  if (position.y < 0) position.y = 0;
-  if (position.y > CANVAS_HEIGHT) position.y = CANVAS_HEIGHT;
+const clampBounds = (hitbox : Hitbox, walls : Wall[], strict : boolean) => {
+  if (strict) {
+    if (hitbox.position.x < 0) hitbox.position.x = 0;
+    if (hitbox.position.x > CANVAS_WIDTH) hitbox.position.x = CANVAS_WIDTH;
+    if (hitbox.position.y < 0) hitbox.position.y = 0;
+    if (hitbox.position.y > CANVAS_HEIGHT) hitbox.position.y = CANVAS_HEIGHT;
+  } else {
+    for (const wall of walls){
+      handleWall(hitbox, wall);
+    }
+  }
 };
 
 const checkOutOfBounds = (hitbox: Hitbox): boolean => {
