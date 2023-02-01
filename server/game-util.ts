@@ -3,6 +3,8 @@ import {Hitbox, Position, Wall} from "../shared/GameTypes";
 import { add } from "../shared/vector-util";
 import { randInt } from "./random";
 
+const BUFFER = 10;
+
 const inWall = (hitbox: Hitbox, wall: Wall) : boolean => {
     const h = hitbox.position;
     const w = wall.center;
@@ -11,7 +13,6 @@ const inWall = (hitbox: Hitbox, wall: Wall) : boolean => {
     return h.x>w.x-xExtent && h.x<w.x+xExtent && h.y<w.y+yExtent && h.y>w.y-yExtent;
 }
 
-const BUFFER = 10;
 const handleWall = (hitbox: Hitbox, wall: Wall) => {
     if (!inWall(hitbox, wall)) return;
     //console.log(hitbox.position.x, hitbox.position.y, wall.center, wall.width, wall.height);
@@ -33,11 +34,35 @@ const collides = (h1 : Hitbox, h2: Hitbox) : boolean => {
     return dx*dx+dy*dy<radiusSum*radiusSum;
 }
 
-const randPos = () : Position => {
-    return {
-        x: randInt(0, CANVAS_WIDTH),
-        y: randInt(0, CANVAS_HEIGHT)
-    };
+const randPos = (side ?: Direction) : Position => {
+    switch(side){
+        case Direction.UP:
+            return {
+                x: randInt(BUFFER, CANVAS_WIDTH-BUFFER),
+                y: randInt(CANVAS_HEIGHT/2, CANVAS_HEIGHT-BUFFER)
+            };
+        case Direction.DOWN:
+            return {
+                x: randInt(BUFFER, CANVAS_WIDTH-BUFFER),
+                y: randInt(BUFFER, CANVAS_HEIGHT/2)
+            };
+        case Direction.LEFT:
+            return {
+                x: randInt(BUFFER, CANVAS_WIDTH/2),
+                y: randInt(BUFFER, CANVAS_HEIGHT-BUFFER)
+            };
+        case Direction.RIGHT:
+            return {
+                x: randInt(CANVAS_WIDTH/2, CANVAS_WIDTH-BUFFER),
+                y: randInt(BUFFER, CANVAS_HEIGHT-BUFFER)
+            };
+        default:
+            return {
+                x: randInt(BUFFER, CANVAS_WIDTH-BUFFER),
+                y: randInt(BUFFER, CANVAS_HEIGHT-BUFFER)
+            };
+
+    }
 }
 
 const randDir = () : Position => {
@@ -53,6 +78,19 @@ enum Direction {
     DOWN,
     LEFT,
     RIGHT
+}
+
+const flip = (d: Direction) : Direction => {
+    switch(d){
+        case Direction.UP:
+            return Direction.DOWN;
+        case Direction.DOWN:
+            return Direction.UP;
+        case Direction.LEFT:
+            return Direction.RIGHT;
+        case Direction.RIGHT:
+            return Direction.LEFT;
+    }
 }
 
 const createClosedWall = (side : Direction) : Wall => {
@@ -126,4 +164,4 @@ const createOpenWall = (side : Direction) : Wall[] => {
     ];
 }
 
-export {collides, randPos, randDir, inWall, handleWall, Direction, createWall};
+export {collides, randPos, randDir, inWall, handleWall, Direction, createWall, flip};

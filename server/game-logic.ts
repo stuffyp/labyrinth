@@ -12,7 +12,7 @@ import {
   RoomType,
   Wall,
 } from "../shared/GameTypes";
-import { collides, createWall, Direction, handleWall, randPos } from "./game-util";
+import { collides, createWall, Direction, flip, handleWall, randPos } from "./game-util";
 import { normalize, add, mult } from "../shared/vector-util";
 import { CANVAS_WIDTH, CANVAS_HEIGHT, DOOR_WIDTH } from "../shared/canvas-constants";
 import BasicEnemy from "./models/BasicEnemy";
@@ -208,7 +208,7 @@ const enterNewRoom = (gameState: GameState, side: Direction) => {
       break;
     case RoomType.ENCOUNTER:
       for (let i = 0; i < 5; i++) {
-        gameState.enemies.push(new HomingShooterEnemy());
+        gameState.enemies.push(new HomingShooterEnemy(side));
       }
       break;
     default:
