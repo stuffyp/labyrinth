@@ -28,7 +28,7 @@ router.post("/initsocket", (req, res) => {
 // |------------------------------|
 // | write your API methods below!|
 // |------------------------------|
-
+/*
 //TODO: really scuffed, change later, SHOULD NOT BE USED FOR NON-DEBUG PURPOSES
 router.get("/lobbies", (req, res) => {
   if (req.user){
@@ -54,7 +54,7 @@ router.get("/what-is-my-socket-id", (req, res) => {
     const userSocket = socketManager.getSocketFromUserID(req.user._id);
     res.send({id: userSocket?.id});
   }
-});
+});*/
 
 router.post("/create-lobby", (req, res) => {
   if (req.user){
@@ -102,6 +102,15 @@ router.post("/rejoin-lobby", (req, res) => {
     }
     lobbyManager.joinRoom(req.user, req.body.roomCode);
     res.send({code: req.body.roomCode});
+  } else {
+    res.status(400).send(NO_USER);
+  }
+});
+
+router.post("/leave-game", (req, res) => {
+  if(req.user){
+    lobbyManager.kickUser(req.user);
+    res.send({});
   } else {
     res.status(400).send(NO_USER);
   }

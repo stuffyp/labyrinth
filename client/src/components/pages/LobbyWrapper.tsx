@@ -6,7 +6,7 @@ import { socket } from "../../client-socket";
 import NotFound from "./NotFound";
 import AlternateRoute from "../debugging/AlternateRoute";
 import GameCanvas from "../modules/GameCanvas";
-import { StartGameButton } from "../modules/MenuButton";
+import { LeaveGameButton, StartGameButton } from "../modules/MenuButton";
 import APITester from "../debugging/APITester";
 
 type LobbyProps = {
@@ -53,6 +53,7 @@ const LobbyWrapper = (props: LobbyProps) => {
           <div>
             <Lobby roomCode={roomCode} users={users} hostIndex={hostIndex} />
             {isHost && <StartGameButton roomCode={roomCode as string} />}
+            <LeaveGameButton />
           </div>
           <GameCanvas roomCode={roomCode} />
         </div>
