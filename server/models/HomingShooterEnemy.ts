@@ -7,6 +7,7 @@ const RADIUS = 10;
 const SPEED = 3;
 const COLOR = "blue";
 const IDLE_FRAMES = 30;
+const HP = 5;
 
 class HomingShooterEnemy implements Enemy {
     position : Position;
@@ -16,6 +17,8 @@ class HomingShooterEnemy implements Enemy {
     frameCount : number;
     behavior : Behavior;
     targetPosition : Position;
+    hp = HP;
+    readonly maxHp = HP;
 
     constructor(side ?: Direction){
         this.destroyed = false;

@@ -2,7 +2,7 @@ import { Vector } from "../../shared/GameTypes";
 import Weapon, {WeaponContext, WeaponState, WeaponUpdateReturn} from "../../shared/Weapon";
 import StraightAllyProjectile from "./StraightAllyProjectile";
 
-const RELOAD = 9;
+const RELOAD = 4;
 class StreamWeapon implements Weapon {
     state : WeaponState;
     frameCount : number;
