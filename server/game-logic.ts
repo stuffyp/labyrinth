@@ -14,7 +14,7 @@ import {
 } from "../shared/GameTypes";
 import { collides, createWall, Direction, flip, handleWall, randPos } from "./game-util";
 import { normalize, add, mult } from "../shared/vector-util";
-import { CANVAS_WIDTH, CANVAS_HEIGHT, DOOR_WIDTH } from "../shared/canvas-constants";
+import { CANVAS_WIDTH, CANVAS_HEIGHT, DOOR_WIDTH, DOOR_DEPTH } from "../shared/canvas-constants";
 import BasicEnemy from "./models/BasicEnemy";
 import ShooterEnemy from "./models/ShooterEnemy";
 import HomingShooterEnemy from "./models/HomingShooterEnemy";
@@ -88,7 +88,7 @@ const updateGameState = (roomCode: string) => {
     if (player.destroyed) continue;
     const speed = player.isSprint ? SPRINT_SPEED : PLAYER_SPEED;
     player.position = add(player.position, mult(speed, normalize(player.moveInput)));
-    if (gameState.enemies.length == 0) checkExitingRoom(gameState, player.position);
+    if (gameState.enemies.length === 0) checkExitingRoom(gameState, player.position);
     clampBounds(player, gameState.walls, gameState.enemies.length > 0);
 
     const updateVal: WeaponUpdateReturn = player.weapon.update({
@@ -232,22 +232,22 @@ const checkExitingRoom = (gameState: GameState, position: Position) => {
     return gameState.minimap[x][y].roomType===RoomType.GHOST;
   };
 
-  if (position.y > CANVAS_HEIGHT && Math.abs(position.x - CANVAS_WIDTH / 2) < DOOR_WIDTH / 2) {
+  if (position.y > CANVAS_HEIGHT+DOOR_DEPTH) {
     if (isGhostRoom(gameState.currentRoomX, gameState.currentRoomY+1)) return;
     enterNewRoom(gameState, Direction.UP);
     return;
   }
-  if (position.y < 0 && Math.abs(position.x - CANVAS_WIDTH / 2) < DOOR_WIDTH / 2) {
+  if (position.y < -DOOR_DEPTH) {
     if (isGhostRoom(gameState.currentRoomX, gameState.currentRoomY-1)) return;
     enterNewRoom(gameState, Direction.DOWN);
     return;
   }
-  if (position.x > CANVAS_WIDTH && Math.abs(position.y - CANVAS_HEIGHT / 2) < DOOR_WIDTH / 2) {
+  if (position.x > CANVAS_WIDTH+DOOR_DEPTH) {
     if (isGhostRoom(gameState.currentRoomX+1, gameState.currentRoomY)) return;
     enterNewRoom(gameState, Direction.RIGHT);
     return;
   }
-  if (position.x < 0 && Math.abs(position.y - CANVAS_HEIGHT / 2) < DOOR_WIDTH / 2) {
+  if (position.x < -DOOR_DEPTH) {
     if (isGhostRoom(gameState.currentRoomX-1, gameState.currentRoomY)) return;
     enterNewRoom(gameState, Direction.LEFT);
     return;
