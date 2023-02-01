@@ -32,7 +32,7 @@ class StreamWeapon implements Weapon {
                 this.frameCount = RELOAD;
                 return {
                     projectiles : [
-                        new StraightAllyProjectile(context.position, rotate(this.shootDir, randInt(-5, 5)))
+                        new StraightAllyProjectile(context.position, rotate(this.shootDir, randInt(-5, 5)), undefined, 2)
                     ]
                 };
             default:
