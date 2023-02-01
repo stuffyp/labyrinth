@@ -10,6 +10,8 @@ import StarEnemy from "./models/StarEnemy";
 import GolemEnemy from "./models/GolemEnemy";
 import GolemBoss from "./models/GolemBoss";
 import SpawnerEnemy from "./models/SpawnerEnemy";
+import HealerEnemy from "./models/HealerEnemy";
+import TankEnemy from "./models/TankEnemy";
 
 const getBasic = (side : Direction) => {return new BasicEnemy(side)};
 const getShooter = (side : Direction) => {return new ShooterEnemy(side)};
@@ -19,12 +21,14 @@ const getAim = (side : Direction) => {return new AimEnemy(side)};
 const getStar = (side : Direction) => {return new StarEnemy(side)};
 const getGolem = (side : Direction) => {return new GolemEnemy(side)};
 const getSpawner = (side : Direction) => {return new SpawnerEnemy(side)};
+const getHealer = (side : Direction) => {return new HealerEnemy(side)};
+const getTank = (side : Direction) => {return new TankEnemy(side)};
 
 const easy = [getBasic, getHoming, getCharge];
-//const easy = [getSpawner];
+//const easy = [getTank];
 const medium = [getBasic, getHoming, getHoming, getCharge, getStar, getAim];
 const hard = [getBasic, getShooter, getAim, getStar, getGolem, getSpawner];
-const endgame = [getHoming, getShooter, getGolem, getSpawner];
+const endgame = [getTank, getHealer, getShooter, getGolem, getSpawner];
 
 const getEasy = (side : Direction) : Enemy => {
     return easy[randInt(0, easy.length)](side);

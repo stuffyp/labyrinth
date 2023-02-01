@@ -41,7 +41,7 @@ const App = () => {
   const handleLogin = (credentialResponse: CredentialResponse) => {
     const userToken = credentialResponse.credential;
     const decodedCredential = jwt_decode(userToken as string) as { name: string; email: string };
-    console.log(`Logged in as ${decodedCredential.name}`);
+    //console.log(`Logged in as ${decodedCredential.name}`);
     post("/api/login", { token: userToken }).then((user) => {
       setUserId(user._id);
       post("/api/initsocket", { socketid: socket.id });

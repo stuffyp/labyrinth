@@ -73,6 +73,12 @@ const setupGame = (roomCode: string, users: User[]) => {
       if (i===9 && j===9) {
         newGameState.minimap[i][j].roomType = RoomType.BOSS;
       }
+      if (i===10 && j<9 || i<9 && j===10) {
+        newGameState.minimap[i][j].roomType = RoomType.GHOST;
+      }
+      if (i===9 && j===9) {
+        newGameState.minimap[i][j].roomType = RoomType.BOSS;
+      }
     }
   }
   newGameState.currentRoomX = 1;
