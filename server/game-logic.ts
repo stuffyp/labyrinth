@@ -27,6 +27,7 @@ import { WeaponUpdateReturn } from "../shared/Weapon";
 import HomingProjectile from "./models/HomingProjectile";
 import { spawnEnemies } from "./EnemySpawner";
 import GolemBoss from "./models/GolemBoss";
+import SpawnerBoss from "./models/SpawnerBoss";
 
 const gameStateMap: Map<string, GameState> = new Map<string, GameState>();
 
@@ -60,10 +61,16 @@ const setupGame = (roomCode: string, users: User[]) => {
       if (i %2 === 0 && j %2 === 0) {
         newGameState.minimap[i][j].roomType = RoomType.GHOST;
       }
-      if (i==1 && j==1) {
+      if (i===1 && j===1) {
         newGameState.minimap[i][j].roomType = RoomType.EMPTY;
       }
-      if (i==5 && j==5) {
+      if (i===5 && j===5) {
+        newGameState.minimap[i][j].roomType = RoomType.BOSS;
+      }
+      if (i===6 && j<5 || i<5 && j===6) {
+        newGameState.minimap[i][j].roomType = RoomType.GHOST;
+      }
+      if (i===9 && j===9) {
         newGameState.minimap[i][j].roomType = RoomType.BOSS;
       }
     }
@@ -129,7 +136,10 @@ const updateGameState = (roomCode: string) => {
   for (const enemy of gameState.enemies) {
     if (enemy.destroyed) continue;
     const updateVal: UpdateReturn = enemy.update(context);
-    if (updateVal) gameState.enemyProjectiles.push(...updateVal.projectiles);
+    if (updateVal) {
+      gameState.enemyProjectiles.push(...updateVal.projectiles);
+      if (updateVal.enemies && gameState.enemies.length < 20) gameState.enemies.push(...updateVal.enemies);
+    }
   }
   for (const projectile of gameState.enemyProjectiles) {
     if (projectile.destroyed) continue;
@@ -195,7 +205,8 @@ const checkCollisions = (gameState: GameState) => {
 
 const healPlayers = (gameState : GameState) => {
   for (const key in gameState.players){
-    gameState.players[key].hp = PLAYER_HP;
+    gameState.players[key].maxHp += 5;
+    gameState.players[key].hp = gameState.players[key].maxHp;
   }
 }
 
@@ -253,7 +264,7 @@ const enterNewRoom = (gameState: GameState, side: Direction) => {
       gameState.enemies = spawnEnemies(gameState.currentRoomX+gameState.currentRoomY, side);
       break;
     case RoomType.BOSS:
-      gameState.enemies = [new GolemBoss(side)];
+      gameState.enemies = gameState.currentRoomX===5 ? [new GolemBoss(side)] : [new SpawnerBoss(side)];
       break;
     default:
       break;
