@@ -7,7 +7,7 @@ const RADIUS = 10;
 const SPEED = 3;
 const COLOR = "blue";
 const IDLE_FRAMES = 30;
-const HP = 5;
+const HP = 10;
 
 class HomingShooterEnemy implements Enemy {
     position : Position;

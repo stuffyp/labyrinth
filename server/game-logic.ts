@@ -25,6 +25,7 @@ import StreamWeapon from "./models/StreamWeapon";
 import SplashWeapon from "./models/SplashWeapon";
 import { WeaponUpdateReturn } from "../shared/Weapon";
 import HomingProjectile from "./models/HomingProjectile";
+import { spawnEnemies } from "./EnemySpawner";
 
 const gameStateMap: Map<string, GameState> = new Map<string, GameState>();
 
@@ -53,6 +54,9 @@ const setupGame = (roomCode: string, users: User[]) => {
         roomType: RoomType.ENCOUNTER,
       });
       if (i == 0 || i == 16 || j == 0 || j == 16) {
+        newGameState.minimap[i][j].roomType = RoomType.GHOST;
+      }
+      if (i %2 === 0 && j %2 === 0) {
         newGameState.minimap[i][j].roomType = RoomType.GHOST;
       }
       if (i==1 && j==1) {
@@ -229,15 +233,7 @@ const enterNewRoom = (gameState: GameState, side: Direction) => {
     case RoomType.EMPTY:
       break;
     case RoomType.ENCOUNTER:
-      for (let i = 0; i < 3; i++) {
-        gameState.enemies.push(new HomingShooterEnemy(side));
-      }
-      for (let i = 0; i < 2; i++) {
-        gameState.enemies.push(new ShooterEnemy(side));
-      }
-      for (let i = 0; i < 2; i++) {
-        gameState.enemies.push(new BasicEnemy(side));
-      }
+      gameState.enemies = spawnEnemies(gameState.currentRoomX+gameState.currentRoomY, side);
       break;
     default:
       break;
