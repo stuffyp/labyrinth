@@ -32,19 +32,23 @@ const JoinLobbyButton = (props) => {
     setRoomCode(event.target.value);
   };
   return (
-    <div>
-      <input type="text" placeholder="" value={roomCode} onChange={handleValueChange} />
-      <button
-        onClick={() => {
-          post("api/join-lobby", { roomCode: roomCode }).then((response) => {
-            setRoomCode(response.code);
-            sessionStorage["last-room-joined"] = response.code;
-            navigate(`/lobby/${response.code}`);
-          });
-        }}
-      >
-        Join Lobby
-      </button>
+    <div className="u-flexColumn">
+      <div className="button-container">
+        <button
+          onClick={() => {
+            post("api/join-lobby", { roomCode: roomCode }).then((response) => {
+              setRoomCode(response.code);
+              sessionStorage["last-room-joined"] = response.code;
+              navigate(`/lobby/${response.code}`);
+            });
+          }}
+        >
+          Join Lobby
+        </button>
+      </div>
+      <div className="button-container">
+        <input type="text" placeholder="" value={roomCode} onChange={handleValueChange} />
+      </div>
     </div>
   );
 };

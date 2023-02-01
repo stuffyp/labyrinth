@@ -64,6 +64,7 @@ const LobbyWrapper = (props: LobbyProps) => {
               <LeaveGameButton />
             </div>
           </div>
+          <div className="vertical-line"></div>
           <GameCanvas roomCode={roomCode} />
         </div>
       ) : (

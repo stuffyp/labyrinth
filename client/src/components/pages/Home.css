@@ -6,4 +6,6 @@
 button {
     border: none;
     border-radius: var(--s);
+    background-color: white;
+    color: black;
 }

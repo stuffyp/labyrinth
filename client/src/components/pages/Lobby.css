@@ -9,4 +9,9 @@
 
 .button-container {
     margin: var(--s);
+    text-align: center;
+}
+
+.vertical-line {
+    border-left: thick solid white;
 }
