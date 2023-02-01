@@ -1,4 +1,4 @@
-import { Enemy, Behavior, Position } from "../../shared/GameTypes";
+import { Enemy, Behavior, Position, UpdateContext } from "../../shared/GameTypes";
 import { distance, moveTowards } from "../../shared/vector-util";
 import { Direction, randPos } from "../game-util";
 
@@ -6,11 +6,11 @@ interface BasicEnemyInterface extends Enemy {
     targetPosition : Position;
 }
 
-const RADIUS = 10;
+const RADIUS = 15;
 const SPEED = 3;
 const COLOR = "green";
 const IDLE_FRAMES = 30;
-const HP = 5;
+const HP = 30;
 
 class BasicEnemy implements BasicEnemyInterface {
     position : Position;
@@ -31,7 +31,7 @@ class BasicEnemy implements BasicEnemyInterface {
         this.frameCount = IDLE_FRAMES;
     }
 
-    update(){
+    update(context : UpdateContext){
         switch(this.behavior){
             case Behavior.IDLE:
                 if (--this.frameCount < 0) {

@@ -1,11 +1,10 @@
 import { Vector } from "../../shared/GameTypes";
 import { rotate } from "../../shared/vector-util";
 import Weapon, {WeaponContext, WeaponState, WeaponUpdateReturn} from "../../shared/Weapon";
-import { randInt } from "../random";
 import StraightAllyProjectile from "./StraightAllyProjectile";
 
-const RELOAD = 3;
-class StreamWeapon implements Weapon {
+const RELOAD = 48;
+class SplashWeapon implements Weapon {
     state : WeaponState;
     frameCount : number;
     shootDir : Vector;
@@ -32,7 +31,13 @@ class StreamWeapon implements Weapon {
                 this.frameCount = RELOAD;
                 return {
                     projectiles : [
-                        new StraightAllyProjectile(context.position, rotate(this.shootDir, randInt(-5, 5)))
+                        new StraightAllyProjectile(context.position, this.shootDir, undefined, 2),
+                        new StraightAllyProjectile(context.position, rotate(this.shootDir, 6), undefined, 2),
+                        new StraightAllyProjectile(context.position, rotate(this.shootDir, 12), undefined, 2),
+                        new StraightAllyProjectile(context.position, rotate(this.shootDir, 18), undefined, 2),
+                        new StraightAllyProjectile(context.position, rotate(this.shootDir, -6), undefined, 2),
+                        new StraightAllyProjectile(context.position, rotate(this.shootDir, -12), undefined, 2),
+                        new StraightAllyProjectile(context.position, rotate(this.shootDir, -18), undefined, 2),
                     ]
                 };
             default:
@@ -43,4 +48,4 @@ class StreamWeapon implements Weapon {
 
 }
 
-export default StreamWeapon;
+export default SplashWeapon;
