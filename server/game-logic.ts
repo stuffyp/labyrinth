@@ -26,6 +26,7 @@ import SplashWeapon from "./models/SplashWeapon";
 import { WeaponUpdateReturn } from "../shared/Weapon";
 import HomingProjectile from "./models/HomingProjectile";
 import { spawnEnemies } from "./EnemySpawner";
+import GolemBoss from "./models/GolemBoss";
 
 const gameStateMap: Map<string, GameState> = new Map<string, GameState>();
 
@@ -61,6 +62,9 @@ const setupGame = (roomCode: string, users: User[]) => {
       }
       if (i==1 && j==1) {
         newGameState.minimap[i][j].roomType = RoomType.EMPTY;
+      }
+      if (i==5 && j==5) {
+        newGameState.minimap[i][j].roomType = RoomType.BOSS;
       }
     }
   }
@@ -180,11 +184,20 @@ const checkCollisions = (gameState: GameState) => {
       if (collides(enemy, projectile)) {
         enemy.hp -= projectile.damage;
         projectile.destroyed = true;
-        if (enemy.hp <= 0) enemy.destroyed = true;
+        if (enemy.hp <= 0) {
+          enemy.destroyed = true;
+          if (enemy.maxHp > 400) healPlayers(gameState); //boss
+        }
       }
     }
   }
 };
+
+const healPlayers = (gameState : GameState) => {
+  for (const key in gameState.players){
+    gameState.players[key].hp = PLAYER_HP;
+  }
+}
 
 const getCurrentRoom = (gameState: GameState) : Room => {
   return gameState.minimap[gameState.currentRoomX][gameState.currentRoomY];
@@ -238,6 +251,9 @@ const enterNewRoom = (gameState: GameState, side: Direction) => {
       break;
     case RoomType.ENCOUNTER:
       gameState.enemies = spawnEnemies(gameState.currentRoomX+gameState.currentRoomY, side);
+      break;
+    case RoomType.BOSS:
+      gameState.enemies = [new GolemBoss(side)];
       break;
     default:
       break;
