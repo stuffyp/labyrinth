@@ -8,6 +8,7 @@ import ChargeEnemy from "./models/ChargeEnemy";
 import AimEnemy from "./models/AimEnemy";
 import StarEnemy from "./models/StarEnemy";
 import GolemEnemy from "./models/GolemEnemy";
+import GolemBoss from "./models/GolemBoss";
 
 const getBasic = (side : Direction) => {return new BasicEnemy(side)};
 const getShooter = (side : Direction) => {return new ShooterEnemy(side)};
