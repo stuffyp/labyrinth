@@ -22,6 +22,7 @@ import HomingShooterEnemy from "./models/HomingShooterEnemy";
 import { InputType } from "../shared/InputType";
 import StraightAllyProjectile from "./models/StraightAllyProjectile";
 import StreamWeapon from "./models/StreamWeapon";
+import SplashWeapon from "./models/SplashWeapon";
 import { WeaponUpdateReturn } from "../shared/Weapon";
 import HomingProjectile from "./models/HomingProjectile";
 
@@ -45,13 +46,13 @@ const setupGame = (roomCode: string, users: User[]) => {
     enemyProjectiles: [],
     allyProjectiles: [],
   };
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 17; i++) {
     newGameState.minimap.push([]);
-    for (let j = 0; j < 5; j++) {
+    for (let j = 0; j < 17; j++) {
       newGameState.minimap[i].push({
         roomType: RoomType.ENCOUNTER,
       });
-      if (i == 0 || i == 4 || j == 0 || j == 4) {
+      if (i == 0 || i == 16 || j == 0 || j == 16) {
         newGameState.minimap[i][j].roomType = RoomType.GHOST;
       }
       if (i==1 && j==1) {
@@ -70,7 +71,7 @@ const setupGame = (roomCode: string, users: User[]) => {
       moveInput: { x: 0, y: 0 },
       isSprint: false,
       shootInput: { x: 0, y: 0 },
-      weapon: new StreamWeapon(),
+      weapon: new SplashWeapon(),
       hp: PLAYER_HP,
       maxHp: PLAYER_HP,
       iFrames: PLAYER_IFRAMES,
@@ -170,7 +171,7 @@ const checkCollisions = (gameState: GameState) => {
     const enemy = gameState.enemies[i];
     for (const projectile of gameState.allyProjectiles) {
       if (collides(enemy, projectile)) {
-        enemy.hp -= 1;
+        enemy.hp -= projectile.damage;
         projectile.destroyed = true;
         if (enemy.hp <= 0) enemy.destroyed = true;
       }
@@ -228,8 +229,14 @@ const enterNewRoom = (gameState: GameState, side: Direction) => {
     case RoomType.EMPTY:
       break;
     case RoomType.ENCOUNTER:
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 3; i++) {
         gameState.enemies.push(new HomingShooterEnemy(side));
+      }
+      for (let i = 0; i < 2; i++) {
+        gameState.enemies.push(new ShooterEnemy(side));
+      }
+      for (let i = 0; i < 2; i++) {
+        gameState.enemies.push(new BasicEnemy(side));
       }
       break;
     default:

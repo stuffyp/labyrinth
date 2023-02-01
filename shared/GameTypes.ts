@@ -81,6 +81,7 @@ interface ESmartProjectile extends EnemyProjectile {
 
 interface AllyProjectile extends Hitbox {
   color: string;
+  damage : number;
   update: (context: UpdateContext) => void;
 }
 

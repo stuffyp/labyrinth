@@ -44,4 +44,14 @@ const distance = (v1 : Vector, v2: Vector) : number => {
     return magnitude(sub(v1, v2));
 }
 
-export {magnitude, normalize, add, sub, mult, moveTowards, distance};
+const rotate = (v : Vector, theta: number) : Vector => {
+    const angle = theta*Math.PI/180;
+    const cos = Math.cos(angle);
+    const sin = Math.sin(angle);
+    return {
+        x: cos*v.x-sin*v.y,
+        y: sin*v.x+cos*v.y
+    };
+}
+
+export {magnitude, normalize, add, sub, mult, moveTowards, distance, rotate};
