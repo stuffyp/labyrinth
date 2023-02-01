@@ -42,12 +42,6 @@ const convertCoord = (position: Position): Coord => {
   };
 };
 
-const convertWallCoord = (position : Position) : Coord => {
-  return {
-    drawX : position.x,
-    drawY: canvas.height-position.y
-  }
-}
 
 // fills a circle at a given x, y canvas coord with radius and color
 const fillCircle = (context, x, y, radius, color) => {
@@ -93,7 +87,7 @@ const drawWalls = (context, color) => {
 
 const drawWall = (context, color, center, width, height) => {
   context.fillStyle = color;
-  const {drawX, drawY} = convertWallCoord(center);
+  const {drawX, drawY} = convertCoord(center);
   context.fillRect(drawX-width/2, drawY-height/2, width, height);
 }
 

@@ -11,12 +11,19 @@ const inWall = (hitbox: Hitbox, wall: Wall) : boolean => {
     return h.x>w.x-xExtent && h.x<w.x+xExtent && h.y<w.y+yExtent && h.y>w.y-yExtent;
 }
 
+const BUFFER = 10;
 const handleWall = (hitbox: Hitbox, wall: Wall) => {
     if (!inWall(hitbox, wall)) return;
-    if (hitbox.position.x < wall.center.x) hitbox.position.x = wall.center.x-wall.width/2;
-    if (hitbox.position.x > wall.center.x) hitbox.position.x = wall.center.x+wall.width/2;
-    if (hitbox.position.y < wall.center.y) hitbox.position.y = wall.center.y-wall.height/2;
-    if (hitbox.position.y > wall.center.y) hitbox.position.y = wall.center.y+wall.height/2;
+    //console.log(hitbox.position.x, hitbox.position.y, wall.center, wall.width, wall.height);
+    const left = wall.center.x-wall.width/2;
+    const right = wall.center.x+wall.width/2;
+    const top = wall.center.y+wall.height/2;
+    const bottom = wall.center.y-wall.height/2;
+
+    if (hitbox.position.x - left < BUFFER) hitbox.position.x = wall.center.x-wall.width/2;
+    if (right-hitbox.position.x < BUFFER) hitbox.position.x = wall.center.x+wall.width/2;
+    if (hitbox.position.y - bottom < BUFFER) hitbox.position.y = wall.center.y-wall.height/2;
+    if (top - hitbox.position.y < BUFFER) hitbox.position.y = wall.center.y+wall.height/2;
 }
 
 const collides = (h1 : Hitbox, h2: Hitbox) : boolean => {
@@ -53,16 +60,16 @@ const createClosedWall = (side : Direction) : Wall => {
     const leftRight = side===Direction.LEFT||side===Direction.RIGHT;
     switch(side){
         case Direction.UP:
-            center = { x : DOOR_DEPTH + CANVAS_WIDTH/2, y : CANVAS_HEIGHT + 3*DOOR_DEPTH/2};
+            center = { x : CANVAS_WIDTH/2, y : CANVAS_HEIGHT + DOOR_DEPTH/2};
             break;
         case Direction.DOWN:
-            center = { x : DOOR_DEPTH + CANVAS_WIDTH/2, y : DOOR_DEPTH/2};
+            center = { x : CANVAS_WIDTH/2, y : -DOOR_DEPTH/2};
             break;
         case Direction.LEFT:
-            center = { x : DOOR_DEPTH/2, y : DOOR_DEPTH + CANVAS_HEIGHT/2};
+            center = { x : -DOOR_DEPTH/2, y : CANVAS_HEIGHT/2};
             break;
         case Direction.RIGHT:
-            center = { x : CANVAS_WIDTH + 3*DOOR_DEPTH/2, y : DOOR_DEPTH + CANVAS_HEIGHT/2};
+            center = { x : CANVAS_WIDTH + DOOR_DEPTH/2, y : CANVAS_HEIGHT/2};
             break;
         default:
             console.log("something went wrong");
@@ -87,19 +94,19 @@ const createWall  = (context : Map<Direction, boolean>) : Wall[] => {
 const createOpenWall = (side : Direction) : Wall[] => {
     let center : Position = {x : 0, y : 0};
     const leftRight = side===Direction.LEFT||side===Direction.RIGHT;
-    const centerOffset = DOOR_DEPTH+((leftRight ? CANVAS_HEIGHT : CANVAS_WIDTH)+DOOR_WIDTH)/2;
+    const centerOffset = ((leftRight ? CANVAS_HEIGHT : CANVAS_WIDTH)+2*DOOR_DEPTH+DOOR_WIDTH)/4;
     switch(side){
         case Direction.UP:
-            center = { x : DOOR_DEPTH + CANVAS_WIDTH/2, y : CANVAS_HEIGHT + 3*DOOR_DEPTH/2};
+            center = { x : CANVAS_WIDTH/2, y : CANVAS_HEIGHT + DOOR_DEPTH/2};
             break;
         case Direction.DOWN:
-            center = { x : DOOR_DEPTH + CANVAS_WIDTH/2, y : DOOR_DEPTH/2};
+            center = { x : CANVAS_WIDTH/2, y : -DOOR_DEPTH/2};
             break;
         case Direction.LEFT:
-            center = { x : DOOR_DEPTH/2, y : DOOR_DEPTH + CANVAS_HEIGHT/2};
+            center = { x : -DOOR_DEPTH/2, y : CANVAS_HEIGHT/2};
             break;
         case Direction.RIGHT:
-            center = { x : CANVAS_WIDTH + 3*DOOR_DEPTH/2, y : DOOR_DEPTH + CANVAS_HEIGHT/2};
+            center = { x : CANVAS_WIDTH + DOOR_DEPTH/2, y : CANVAS_HEIGHT/2};
             break;
         default:
             console.log("something went wrong");

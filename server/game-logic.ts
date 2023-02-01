@@ -10,8 +10,9 @@ import {
   AllyProjectile,
   UpdateContext,
   RoomType,
+  Wall,
 } from "../shared/GameTypes";
-import { collides, createWall, Direction, randPos } from "./game-util";
+import { collides, createWall, Direction, handleWall, randPos } from "./game-util";
 import { normalize, add, mult } from "../shared/vector-util";
 import { CANVAS_WIDTH, CANVAS_HEIGHT, DOOR_WIDTH } from "../shared/canvas-constants";
 import BasicEnemy from "./models/BasicEnemy";
@@ -88,7 +89,7 @@ const updateGameState = (roomCode: string) => {
     const speed = player.isSprint ? SPRINT_SPEED : PLAYER_SPEED;
     player.position = add(player.position, mult(speed, normalize(player.moveInput)));
     if (gameState.enemies.length == 0) checkExitingRoom(gameState, player.position);
-    clampBounds(player.position);
+    clampBounds(player, gameState.walls, gameState.enemies.length > 0);
 
     const updateVal: WeaponUpdateReturn = player.weapon.update({
       position: player.position,
@@ -160,6 +161,7 @@ const getCurrentRoom = (gameState: GameState) : Room => {
   return gameState.minimap[gameState.currentRoomX][gameState.currentRoomY];
 }
 
+const BUFFER = 10;
 const enterNewRoom = (gameState: GameState, side: Direction) => {
   let enterPosition : Position = {x : 0, y : 0};
   switch(side){
@@ -167,27 +169,27 @@ const enterNewRoom = (gameState: GameState, side: Direction) => {
       gameState.currentRoomY += 1;
       enterPosition = {
         x: CANVAS_WIDTH/2,
-        y: 0,
+        y: BUFFER,
       };
       break;
     case Direction.DOWN:
       gameState.currentRoomY -= 1;
       enterPosition = {
         x: CANVAS_WIDTH/2,
-        y: CANVAS_HEIGHT,
+        y: CANVAS_HEIGHT-BUFFER,
       };
       break;
     case Direction.RIGHT:
       gameState.currentRoomX += 1;
       enterPosition = {
-        x: 0,
+        x: BUFFER,
         y: CANVAS_HEIGHT/2,
       };
       break;
     case Direction.LEFT:
       gameState.currentRoomX -= 1;
       enterPosition = {
-        x: CANVAS_WIDTH,
+        x: CANVAS_WIDTH-BUFFER,
         y: CANVAS_HEIGHT/2,
       };
       break;
@@ -252,11 +254,17 @@ const checkExitingRoom = (gameState: GameState, position: Position) => {
   }
 };
 
-const clampBounds = (position: Position) => {
-  if (position.x < 0) position.x = 0;
-  if (position.x > CANVAS_WIDTH) position.x = CANVAS_WIDTH;
-  if (position.y < 0) position.y = 0;
-  if (position.y > CANVAS_HEIGHT) position.y = CANVAS_HEIGHT;
+const clampBounds = (hitbox : Hitbox, walls : Wall[], strict : boolean) => {
+  if (strict) {
+    if (hitbox.position.x < 0) hitbox.position.x = 0;
+    if (hitbox.position.x > CANVAS_WIDTH) hitbox.position.x = CANVAS_WIDTH;
+    if (hitbox.position.y < 0) hitbox.position.y = 0;
+    if (hitbox.position.y > CANVAS_HEIGHT) hitbox.position.y = CANVAS_HEIGHT;
+  } else {
+    for (const wall of walls){
+      handleWall(hitbox, wall);
+    }
+  }
 };
 
 const checkOutOfBounds = (hitbox: Hitbox): boolean => {
