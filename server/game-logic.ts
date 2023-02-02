@@ -180,7 +180,9 @@ const cleanUpGameState = (roomCode: string) => {
 };
 
 const checkCollisions = (gameState: GameState) => {
+  let numPlayers = 0;
   for (const key in gameState.players) {
+    numPlayers++;
     const player = gameState.players[key];
     for (const enemy of gameState.enemies) {
       if (player.destroyed) break;
@@ -198,12 +200,15 @@ const checkCollisions = (gameState: GameState) => {
     }
     if (player.hp<=0) player.destroyed = true;
   }
+
+  const damageMultiplier : number = Math.max(2/(1+numPlayers), 1/6);
+
   for (let i = gameState.enemies.length - 1; i >= 0; i--) {
     if (!gameState) return;
     const enemy = gameState.enemies[i];
     for (const projectile of gameState.allyProjectiles) {
       if (collides(enemy, projectile)) {
-        enemy.hp -= projectile.damage;
+        enemy.hp -= projectile.damage*damageMultiplier;//reduces damage for more players
         projectile.destroyed = true;
         if (enemy.hp <= 0) {
           enemy.destroyed = true;
