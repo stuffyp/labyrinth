@@ -10,7 +10,7 @@ const RADIUS = 15;
 const SPEED = 3;
 const COLOR = "green";
 const IDLE_FRAMES = 30;
-const HP = 30;
+const HP = 24;
 
 class BasicEnemy implements BasicEnemyInterface {
     position : Position;

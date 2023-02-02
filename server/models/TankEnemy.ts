@@ -6,7 +6,7 @@ const RADIUS = 15;
 const SPEED = 2;
 const COLOR = "#5e60ce";
 const IDLE_FRAMES = 50;
-const HP = 90;
+const HP = 72;
 
 class TankEnemy implements Enemy {
     position : Position;

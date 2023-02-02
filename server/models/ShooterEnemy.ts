@@ -11,7 +11,7 @@ const RADIUS = 10;
 const SPEED = 3;
 const COLOR = "purple";
 const IDLE_FRAMES = 30;
-const HP = 10;
+const HP = 8;
 
 const BULLET_SPEED = 5;
 

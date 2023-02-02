@@ -11,7 +11,7 @@ const COLOR = "#8ecae6";
 const IDLE_FRAMES = 240;
 const CHARGE_FRAMES = 50;
 const PAUSE_FRAMES = 30;
-const HP = 70;
+const HP = 56;
 const INFINITY = 999999999;
 
 class GolemEnemy implements Enemy{

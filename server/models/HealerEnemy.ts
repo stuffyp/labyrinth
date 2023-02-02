@@ -12,7 +12,7 @@ const SPEED = 3;
 const COLOR = "#ee6c4d";
 const IDLE_FRAMES = 30;
 const SHOOT_FRAMES = 160;
-const HP = 24;
+const HP = 20;
 const HEAL = 3;
 
 class HealerEnemy implements Enemy{

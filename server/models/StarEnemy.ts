@@ -11,7 +11,7 @@ const SPEED = 3;
 const COLOR = "#e9edc9";
 const IDLE_FRAMES = 30;
 const SHOOT_FRAMES = 60;
-const HP = 20;
+const HP = 16;
 const INFINITY = 999999999;
 const BULLET_SPEED = 3;
 
