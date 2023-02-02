@@ -11,7 +11,7 @@ const RADIUS = 12;
 const SPEED = 3;
 const COLOR = "#ee6c4d";
 const IDLE_FRAMES = 30;
-const SHOOT_FRAMES = 160;
+const SHOOT_FRAMES = 180;
 const HP = 20;
 const HEAL = 3;
 

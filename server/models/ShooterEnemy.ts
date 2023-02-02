@@ -13,7 +13,7 @@ const COLOR = "purple";
 const IDLE_FRAMES = 30;
 const HP = 8;
 
-const BULLET_SPEED = 5;
+const BULLET_SPEED = 4;
 
 class ShooterEnemy implements ShooterEnemyInterface {
     position : Position;
