@@ -192,7 +192,7 @@ const checkCollisions = (gameState: GameState) => {
     for (const projectile of gameState.enemyProjectiles) {
       if (player.destroyed) break;
       if (collides(player, projectile) && player.iFrameCount<=0){
-        player.hp -= 1;
+        player.hp -= projectile.damage ?? 1;//google null coalescing
         player.iFrameCount = player.iFrames;
       }
     }

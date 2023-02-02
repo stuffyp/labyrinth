@@ -72,6 +72,7 @@ interface Enemy extends EnemyInfo, EnemyBehavior {}
 
 interface EnemyProjectile extends Hitbox {
   color: string;
+  damage ?: number;
   update: (context: UpdateContext) => void;
 }
 
