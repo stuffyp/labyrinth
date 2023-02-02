@@ -8,7 +8,7 @@ import { randInt } from "../random";
 const RADIUS = 12;
 const SPEED = 4;
 const COLOR = "#bb9457";
-const HP = 50;
+const HP = 45;
 const HP_VARIANCE = 10;
 const INFINITY = 999999999;
 const DECAY_FRAMES = 4;

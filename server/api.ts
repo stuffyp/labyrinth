@@ -116,7 +116,6 @@ router.post("/leave-game", (req, res) => {
   }
 });
 
-//TODO: validate input
 router.get("/lobby", (req, res) => {
   const roomCode = req.query.roomCode;
   if(typeof roomCode!=="string"){

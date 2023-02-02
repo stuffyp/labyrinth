@@ -6,6 +6,8 @@ import {add, mult} from "../../shared/vector-util";
 const RADIUS = 16;
 const COLOR = "#ffb627";
 const SPEED = 2;
+const DAMAGE = 4;
+
 class BiggestStraightProjectile implements EnemyProjectile {
     position : Position;
     readonly radius = RADIUS;
@@ -13,6 +15,7 @@ class BiggestStraightProjectile implements EnemyProjectile {
     readonly color = COLOR;
     readonly dir : Vector;
     readonly speed : number;
+    readonly damage : number = DAMAGE;
 
     constructor(position : Position, speed : number = SPEED, dir ?: Vector){
         this.position = position;

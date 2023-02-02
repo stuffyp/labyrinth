@@ -9,7 +9,7 @@ const SPEED = 5;
 const COLOR = "#20c98e";
 const IDLE_FRAMES = 60;
 const MIN_CHARGE_FRAMES = 120;
-const HP = 40;
+const HP = 32;
 const INFINITY = 999999999;
 
 class ChargeEnemy implements Enemy{

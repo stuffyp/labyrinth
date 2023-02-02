@@ -31,11 +31,11 @@ class SplashWeapon implements Weapon {
                 this.frameCount = RELOAD;
                 return {
                     projectiles : [
-                        new StraightAllyProjectile(context.position, this.shootDir, undefined, 3),
-                        new StraightAllyProjectile(context.position, rotate(this.shootDir, 6), undefined, 3),
+                        new StraightAllyProjectile(context.position, this.shootDir, undefined, 4),
+                        new StraightAllyProjectile(context.position, rotate(this.shootDir, 6), undefined, 4),
                         new StraightAllyProjectile(context.position, rotate(this.shootDir, 12), undefined, 3),
                         new StraightAllyProjectile(context.position, rotate(this.shootDir, 18), undefined, 3),
-                        new StraightAllyProjectile(context.position, rotate(this.shootDir, -6), undefined, 3),
+                        new StraightAllyProjectile(context.position, rotate(this.shootDir, -6), undefined, 4),
                         new StraightAllyProjectile(context.position, rotate(this.shootDir, -12), undefined, 3),
                         new StraightAllyProjectile(context.position, rotate(this.shootDir, -18), undefined, 3),
                     ]

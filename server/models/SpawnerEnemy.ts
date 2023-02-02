@@ -8,7 +8,7 @@ const RADIUS = 15;
 const SPEED = 3;
 const COLOR = "#ccff33";
 const IDLE_FRAMES = 90;
-const HP = 16;
+const HP = 15;
 const SPAWN_FRAMES = 300;
 
 class SpawnerEnemy implements Enemy {

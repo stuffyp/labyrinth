@@ -4,7 +4,7 @@ import Weapon, {WeaponContext, WeaponState, WeaponUpdateReturn} from "../../shar
 import { randInt } from "../random";
 import StraightAllyProjectile from "./StraightAllyProjectile";
 
-const RELOAD = 3;
+const RELOAD = 2;
 class StreamWeapon implements Weapon {
     state : WeaponState;
     frameCount : number;
